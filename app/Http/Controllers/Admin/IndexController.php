@@ -32,7 +32,9 @@ class IndexController extends AdminController {
             default: abort(404);
             break;
         }
-
+        foreach ($objects as $object) {
+            $object->client = json_decode($object->client);
+        }
         $this->content = view(config('settings.theme').'.admin.objects')->with('objects', $objects)->render();
         $this->title = 'Панель администратора';
 

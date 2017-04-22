@@ -180,6 +180,8 @@ return [
 
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
+        Collective\Html\HtmlServiceProvider::class,
+
         'Lavary\Menu\ServiceProvider',
 
     ],
@@ -231,8 +233,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Photo' => Intervention\Image\Facades\Image::class,
-
-        'Menu'       => 'Lavary\Menu\Facade',
+        'Menu' => 'Lavary\Menu\Facade',
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
 
     ],
 

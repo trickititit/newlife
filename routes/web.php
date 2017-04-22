@@ -25,7 +25,8 @@ Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
     //admin
     Route::get('/{type?}',['uses' => 'Admin\IndexController@index','as' => 'adminIndex']);
 
-    Route::get('/object/create',['uses' => 'Admin\ObjectsController@create','as' => 'adminObjectCreate']);
+    Route::get('/object/create',['uses' => 'Admin\ObjectsController@createForm','as' => 'adminObjectCreateForm']);
+    Route::post('/object/create',['uses' => 'Admin\ObjectsController@create','as' => 'adminObjectCreate']);
 
     Route::post('/object/delete/image',['uses'=>'Admin\Storage@objDeleteImage','as'=>'adminObjDelImg']);
     Route::post('/object/upload/image',['uses'=>'Admin\Storage@objUploadImage','as'=>'adminObjUplImg']);

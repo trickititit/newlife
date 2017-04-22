@@ -1,7 +1,7 @@
-::selection {
+.checklist ::selection {
   	background: none;
 }
-::-moz-selection {
+.checklist ::-moz-selection {
   	background: none;
 }
 .checklist {
@@ -14,7 +14,6 @@
 .checklist > * {
 	display: inline-block;
 	padding: 10px 0px;
-	width: 38px;
 	cursor: pointer;
 	text-align: center;
 	color: #0036ff;
@@ -97,7 +96,8 @@
 	padding: 2px 3px;
 }
 .checklist.large > * {
-	width: 45px;
+	min-width: 80px;
+	min-height: 45px;
 	padding: 12px 0px;
 	font-size: 15px;
 }

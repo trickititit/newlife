@@ -24,15 +24,27 @@
                 <table class="table table-hover">
                 <tbody>
                 <tr>
-                    <td><div style="width: 30px;"></div></td>
-                    <td><div style="width: 30px;"><i class="fa fa-retweet fa-lg"></i></div></td>
-                    <td><div style="width: 110px;"><a href="http://rieltor/content/?id=65">2-к квартира</a><br>333 м² 1/1 эт.<br>07.12.2016</div></td>
+                    <td><div style="width: 30px;">{!! $object->images->isEmpty() ? "" : "<i class=\"fa fa-camera fa-lg\"></i>" !!}</div></td>
+                    <td><div style="width: 30px;">{!!  $object->deal == "Продажа" ? "<i class=\"fa fa-shopping-cart fa-lg\"></i>" : "<i class=\"fa fa-retweet fa-lg\"></i>" !!}</div></td>
+                    <td><div style="width: 110px;">
+                        @if($object->category == 1)
+                            <a href="{{$object->id}}">{{$object->rooms}}-к квартира</a><br>{{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
+                        @elseif($object->category == 2)
+                            <a href="{{$object->id}}">{{$object->type}}</a><br>{{$object->square}} м² на участке {{$object->earth_square}}<br>{{ $object->created_at->format('m/d/Y') }}
+                        @elseif($object->category == 3)
+                            <a href="{{$object->id}}">Комната в {{$object->rooms}}-к</a><br>{{$object->home_square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
+                        @endif
+                    </div></td>
                     <td><div style="width: 130px;">{{ $object->gorod->name }},<br>{{ $object->address }},<br>{{ $object->raion->name }}</div></td>
                     <td><div style="width: 50px;">{{ $object->price }}</div></td>
-                    <td><div style="width: 200px;">{{ $object->desc }}</div></td>
+                    <td><div style="width: 300px;">{{ $object->desc }}</div></td>
                     <td><div style="width: 50px;">{{ $object->surcharge }}</div></td>
-                    <td><div style="width: 200px;">{{ $object->comment }}</div></td>
-                    <td><div style="width: 50px;">{{ $object->client_contacts }}</div></td>
+                    <td><div style="width: 300px;">{{ $object->comment }}</div></td>
+                    <td><div style="width: 120px;">+7 {{$object->client->phone}} - {{ $object->client->name }} {{$object->client->father_name}}<br/>
+                     {{--@foreach($object->comforts as $comfort)--}}
+                            {{--{{ $comfort->title }}--}}
+                     {{--@endforeach--}}
+                        </div></td>
                     <td style="width: 75px"><a href="http://rieltor/cabinet/?view=objedit&amp;id=65" title="Редактировать"><i class="fa fa-edit fa-lg"></i></a><a href="http://rieltor/cabinet/?do=in_pre_work&amp;id=65" title="Взять в работу"><i class="fa fa-gears fa-lg"></i></a><i title="Убрать из избранное" class="fa fa-star fa-lg favor"><id hidden="">65</id></i><a href="http://rieltor/cabinet/?do=pre_delete&amp;id=65" title="Удалить"><i class="fa fa-trash fa-lg"></i></a></td>
                 </tr>
                 </tbody>

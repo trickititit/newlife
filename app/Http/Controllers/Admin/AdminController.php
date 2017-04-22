@@ -51,8 +51,7 @@ class AdminController extends Controller
             'tether' => array('url' => '<script src="'.$this->pub_path.'/js/lib/tether/tether.min.js"></script>'),
             'bootstrap' => array('url' => '<script src="'.$this->pub_path.'/js/lib/bootstrap/bootstrap.min.js"></script>'),
             'plugins' => array('url' => '<script src="'.$this->pub_path.'/js/plugins.js"></script>'),
-            'jq-ui' => array('url' => '<script src="'.$this->pub_path.'/js/lib/jqueryui/jquery-ui.min.js"></script>'),
-            'app' => array('url' => '<script src="'.$this->pub_path.'/js/app.js"></script>'),
+            'notify' => array('url' => '<script src="'.$this->pub_path.'/js/lib/bootstrap-notify/bootstrap-notify.min.js"></script>'),
         );
         $this->m_rep = $m_rep;
     }

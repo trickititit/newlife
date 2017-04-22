@@ -267,7 +267,22 @@
 }
 </style>
 <!-- START SCRIPT INCLUDE -->
-    @yield('include_js')
+@yield('include_js')
+@if (session('status'))
+    <script>
+    $(document).ready(function() {
+        $.notify({
+            icon: 'font-icon font-icon-check-circle',
+            title: '<strong>Успешно</strong>',
+            message: '{{ session('status') }}'
+        }, {
+            type: 'success'
+        });
+    });
+    </script>
+@endif
 <!-- END SCRIPT INCLUDE -->
+
+<script src="{{ asset(config('settings.theme')) }}/js/app.js"></script>
 </body>
 </html>
