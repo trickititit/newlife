@@ -9,7 +9,7 @@
         </div>
     </header>
     <div class="box-typical-body">
-        {!! Form::open(["url" => route("adminObjectCreate"), "class" => "form-wizard", 'method' => "POST", "id" => "objCreate"]) !!}
+        {!! Form::open(["url" => (isset($object->id)) ? route('object.update',['object'=>$object->alias]) : route('object.store'), "class" => "form-wizard", 'method' => "POST", "id" => "objCreate"]) !!}
             <div>
                 <h3>Тип, город, район</h3>
                 <section>
@@ -79,7 +79,7 @@
                         {!! Form::hidden('obj_geo', isset($object->geo)? $object->geo: old("obj_geo"), ["id" => "obj_geo"]) !!}
                         <div id="address form-group">
                             <label for="obj_address">Адрес</label>
-                            {!! Form::text('obj_address', isset($object->address)? $object->address : old("obj_address"), ['id'=>'obj_address', "class" => "form-control", 'aria-describedby'=>'adrHelp', "required" => ""]) !!}
+                        {!! Form::text('obj_address', isset($object->address)? $object->address : old("obj_address"), ['id'=>'obj_address', "class" => "form-control", 'aria-describedby'=>'adrHelp', "required" => ""]) !!}
                             <small id="adrHelp" class="form-text text-muted">Можно поменять сформировавшийся адрес.</small>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                     <div id="square" class="form-group">
                         <label for="obj_square">Площадь</label>
                         <div class="input-group">
-                            <input name="obj_square" type="text" class="form-control money-mask-input" required>
+                         {!! Form::text('obj_square', isset($object->square)? $object->square : old("obj_square"), ["class" => "form-control money-mask-input", "required" => ""]) !!}
                             <div class="input-group-addon">
                                 <span>м²</span>
                             </div>
@@ -128,7 +128,7 @@
                     <div id="house_square" class="form-group" style="display: none;">
                         <label for="obj_house_square">Площадь дома</label>
                         <div class="input-group">
-                            <input name="obj_house_square" type="text" class="form-control money-mask-input" required>
+                            {!! Form::text('obj_house_square', isset($object->home_square)? $object->home_square : old("obj_house_square"), ["class" => "form-control money-mask-input", "required" => ""]) !!}
                             <div class="input-group-addon">
                                 <span>м²</span>
                             </div>
@@ -137,7 +137,7 @@
                     <div id="earth_square" class="form-group" style="display: none;">
                         <label for="obj_earth_square">Площадь участка в сот.</label>
                         <div class="input-group">
-                            <input name="obj_earth_square" type="text" class="form-control money-mask-input" required>
+                            {!! Form::text('obj_earth_square', isset($object->earth_square)? $object->earth_square : old("obj_earth_square"), ["class" => "form-control money-mask-input", "required" => ""]) !!}
                             <div class="input-group-addon">
                                 <span>сот.</span>
                             </div>
@@ -147,9 +147,9 @@
                         <h4 class="m-t-md">Удобства</h4>
                         <div>
                             <div id="comforts-no-border" class="no-border">
-                                @foreach($comforts as $comfort)
-                                <input type="checkbox" name="comfort[]" value="{{$comfort->title}}">
-                                @endforeach
+                                    @foreach($comforts as $comfort)
+                                            {!! Form::checkbox('comfort[]', $comfort->title) !!}
+                                    @endforeach
                             </div>
                         </div>
                     </div>
@@ -158,30 +158,30 @@
                 <section>
                     <div id="desc" class="form-group">
                         <label for="obj_desc">Описание объявления</label>
-                        <textarea class="form-control" cols="40" rows="6" name="obj_desc"></textarea>
+                        {!! Form::textarea('obj_desc', isset($object->desc) ? $object->desc  : old('obj_desc'), ['class' => 'form-control','placeholder'=>'Введите Описание', "cols" => "40", "rows" => "6"]) !!}
                     </div>
                     <div id="comment" class="form-group">
                         <label for="obj_comment">Комментарий</label>
-                        <textarea class="form-control" cols="40" rows="3" name="obj_comment"></textarea>
+                        {!! Form::textarea("obj_comment", isset($object->comment) ? $object->comment  : old('obj_comment'), ['class' => 'form-control','placeholder'=>'Введите Комментарий', "cols" => "40", "rows" => "3"]) !!}
                     </div>
                     <div id="price_square" class="form-group">
                         <label class="form-label semibold" for="obj_price_square">Цена за м²</label>
                         <div class="form-control-wrapper form-control-icon-right">
-                            <input name="obj_price_square" type="text" class="form-control money-mask-input" readonly/>
+                            {!! Form::text('obj_price_square', isset($object->price_square)? $object->price_square : old("obj_price_square"), ["class" => "form-control money-mask-input", "readonly" => ""]) !!}
                             <i class="glyphicon glyphicon-ruble"></i>
                         </div>
                     </div>
                     <div id="price" class="form-group">
                         <label class="form-label semibold" for="obj_price">Цена</label>
                         <div class="form-control-wrapper form-control-icon-right">
-                            <input name="obj_price" type="text" class="form-control money-mask-input" required/>
+                            {!! Form::text('obj_price', isset($object->price)? $object->price : old("obj_price"), ["class" => "form-control money-mask-input", "required" => ""]) !!}
                             <i class="glyphicon glyphicon-ruble"></i>
                         </div>
                     </div>
                     <div id="doplata" class="form-group">
                         <label class="form-label semibold" for="obj_doplata">Доплата в руб.</label>
                         <div class="form-control-wrapper form-control-icon-right">
-                            <input name="obj_doplata" type="text" class="form-control money-mask-input" required/>
+                            {!! Form::text('obj_doplata', isset($object->surcharge)? $object->surcharge : old("obj_doplata"), ["class" => "form-control money-mask-input", "required" => ""]) !!}
                             <i class="glyphicon glyphicon-ruble"></i>
                         </div>
                     </div>
@@ -191,32 +191,32 @@
                     <div class="col-md-4">
                     <fieldset class="form-group">
                         <label class="form-label semibold" for="client_name">Имя</label>
-                        <input id="client_name" name="client_name" class="form-control" type="text">
+                        {!! Form::text('client_name', isset($object->client->name)? $object->client->name : old("client_name"), ["id" => "client_name" ,"class" => "form-control", "required" => ""]) !!}
                     </fieldset>
                     </div>
                     <div class="col-md-4">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_family">Фамилия</label>
-                            <input id="client_family" name="client_family" class="form-control" type="text">
+                            {!! Form::text('client_family', isset($object->client->family)? $object->client->family : old("client_family"), ["id" => "client_family" ,"class" => "form-control", "required" => ""]) !!}
                         </fieldset>
                     </div>
                     <div class="col-md-4">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_father_name">Отчество</label>
-                            <input id="client_father_name" name="client_father_name" class="form-control" type="text">
+                            {!! Form::text('client_father_name', isset($object->client->father_name)? $object->client->father_name : old("client_father_name"), ["id" => "client_father_name" ,"class" => "form-control", "required" => ""]) !!}
                         </fieldset>
                     </div>
                     <h5 class="m-t-lg with-border">Данные</h5>
                     <div class="col-md-6">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_place">Место рождения</label>
-                            <input id="client_place" name="client_place" class="form-control" type="text">
+                            {!! Form::text('client_place', isset($object->client->place)? $object->client->place : old("client_place"), ["id" => "client_place" ,"class" => "form-control"]) !!}
                         </fieldset>
                     </div>
                     <div class="col-md-6">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_date">Дата рождения</label>
-                            <input id="client_date" name="client_date" class="form-control date-mask-input" type="text">
+                            {!! Form::text('client_date', isset($object->client->date)? $object->client->date : old("client_date"), ["id" => "client_date" ,"class" => "form-control date-mask-input"]) !!}
                         </fieldset>
                     </div>
                     <div class="col-md-6">
@@ -226,38 +226,41 @@
                                     <div class="input-group-addon">
                                         <span>+7</span>
                                     </div>
-                                    <input name="client_phone" type="text" class="form-control phone-mask-input" required>
+                                    {!! Form::text('client_phone', isset($object->client->phone)? $object->client->phone : old("client_phone"), ["id" => "client_phone" ,"class" => "form-control phone-mask-input",  "required" => ""]) !!}
                                 </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_mail">E-mail</label>
-                            <input id="client_mail" name="client_mail" class="form-control" type="email">
+                            {!! Form::email('client_mail', isset($object->client->mail)? $object->client->mail : old("client_mail"), ["id" => "client_mail" ,"class" => "form-control"]) !!}
                         </fieldset>
                     </div>
                     <h5 class="m-t-lg with-border">Паспорт</h5>
                     <div class="col-md-4">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_pasport">Серия, Номер</label>
-                            <input id="client_pasport" name="client_pasport" class="form-control pasport-mask-input" type="text">
+                            {!! Form::text('client_pasport', isset($object->client->pasport)? $object->client->pasport : old("client_pasport"), ["id" => "client_pasport" ,"class" => "form-control pasport-mask-input"]) !!}
                         </fieldset>
                     </div>
                     <div class="col-md-4">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_pasport_who_take">Кем выдан</label>
-                            <input id="client_pasport_who_take" name="client_pasport_who_take" class="form-control" type="text">
+                            {!! Form::text('client_pasport_who_take', isset($object->client->pasport_who_take)? $object->client->pasport_who_take : old("client_pasport_who_take"), ["id" => "client_pasport_who_take" ,"class" => "form-control"]) !!}
                         </fieldset>
                     </div>
                     <div class="col-md-4">
                         <fieldset class="form-group">
                             <label class="form-label semibold" for="client_pasport_date">Когда выдан</label>
-                            <input id="client_pasport_date" name="client_pasport_date" class="form-control date-mask-input" type="text">
+                            {!! Form::text('client_pasport_date', isset($object->client->pasport_date)? $object->client->pasport_date : old("client_pasport_date"), ["id" => "client_pasport_date" ,"class" => "form-control date-mask-input"]) !!}
                         </fieldset>
                     </div>
                 </section>
             </div>
-            <input name="obj_id" value="{{$obj_id}}" type="text" hidden >
+            @if(isset($object->id))
+                <input type="hidden" name="_method" value="PUT">
+            @endif
+            {!! Form::hidden('obj_id', isset($object->id)? $object->id: old("obj_id", $obj_id)) !!}
             {!! Form::close() !!}
     </div><!--.box-typical-body-->
 </section>
@@ -270,11 +273,10 @@
                 <h4 class="modal-title" id="myModalLabel">Загрузка изображений</h4>
             </div>
             <div class="modal-body">
-                <form action="{{route('adminObjUplImg')}}" class="dropzone" id="my-dropzone">
-                    {{ csrf_field() }}
-                    <input id="obj-id" name="obj_id" value="{{$obj_id}}" type="text" hidden >
-                    <input id="tmp-img" name="tmp_img" value="1" type="text" hidden >
-                </form>
+                {!! Form::open(["url" => route("adminObjUplImg"), "class" => "dropzone", 'method' => "POST", "id" => "my-dropzone"]) !!}
+                    {!! Form::hidden('obj_id', isset($object->id)? $object->id: old("obj-id", $obj_id), ["id" => "obj-id"]) !!}
+                    {!! Form::hidden('tmp_img', isset($object->id)? 0: old("tmp-img", 1), ["id" => "tmp-img"]) !!}
+                {!! Form::close() !!}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>

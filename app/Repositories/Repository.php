@@ -9,7 +9,7 @@ abstract class Repository {
 	protected $model = FALSE;
 	
 	
-	public function get($select = '*',$take = FALSE,$pagination = FALSE, $where = FALSE) {
+	public function get($select = '*',$take = FALSE,$pagination = FALSE, $where = FALSE, $count = FALSE) {
 		
 		$builder = $this->model->select($select);
 		
@@ -25,8 +25,12 @@ abstract class Repository {
 		if($pagination) {
 			return $this->check($builder->paginate(Config::get('settings.paginate')));
 		}
-
-		return $builder->get();
+		
+		if($count) {
+			return $builder->count();
+		} else {
+			return $builder->get();	
+		}
 	}
 
 	public function getMaxId() {
@@ -39,9 +43,12 @@ abstract class Repository {
 
 	}
 	
-	public function destroy($id) {
-		$result = $this->model->find($id)->delete();
-		
+	public function destroy($id, $model_soft = false) {
+		if($model_soft) {
+			$result = $this->model->find($id)->forceDelete();
+		} else {
+			$result = $this->model->find($id)->delete();
+		}		
 		return $result;
 	}
 	
@@ -56,8 +63,6 @@ abstract class Repository {
 			if(is_string($item->img) && is_object(json_decode($item->img)) && (json_last_error() == JSON_ERROR_NONE)) {
 				$item->img = json_decode($item->img);
 			}
-			
-			
 
 			return $item;
 			
@@ -120,7 +125,7 @@ abstract class Repository {
 		}
 		
 		//  A-Za-z0-9-
-		$str = preg_replace('/(\s|[^A-Za-z0-9\-])+/','-',$str);
+		$str = preg_replace('/(\s|[^A-Za-z0-9\-])+/','_',$str);
 		
 		$str = trim($str,'-');
 		

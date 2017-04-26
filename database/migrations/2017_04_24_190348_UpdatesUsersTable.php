@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdatesObjectsTable extends Migration
+class UpdatesUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class UpdatesObjectsTable extends Migration
      */
     public function up()
     {
-        Schema::table('objects', function (Blueprint $table) {
-            $table->text('comment', false, true)->after('desc');
+        Schema::table('users', function (Blueprint $table) {
+            $table->integer('role_id', false, true)->nullable();
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('SET NULL');
         });
     }
 
@@ -25,7 +26,7 @@ class UpdatesObjectsTable extends Migration
      */
     public function down()
     {
-        Schema::table('objects', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
         });
     }

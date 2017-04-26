@@ -1,4 +1,8 @@
 @charset "UTF-8";
+.action {
+  background: none;
+  border: none; }
+
 .obj-table-elem {
   height: 75px;
   overflow: hidden; }

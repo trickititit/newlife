@@ -22,6 +22,8 @@ class ComfortsRepository extends Repository {
                 $comforts_id[] = $comfort->id;
             }
             return $comforts_id;
+        } else {
+            return false;
         }
     }
 }

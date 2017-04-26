@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdatesObjectsTable extends Migration
+class CreateAdmmenusRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class UpdatesObjectsTable extends Migration
      */
     public function up()
     {
-        Schema::table('objects', function (Blueprint $table) {
-            $table->text('comment', false, true)->after('desc');
+        Schema::create('adm_menu_role', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +26,6 @@ class UpdatesObjectsTable extends Migration
      */
     public function down()
     {
-        Schema::table('objects', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('adm_menu_role');
     }
 }

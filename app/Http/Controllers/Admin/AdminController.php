@@ -99,18 +99,18 @@ class AdminController extends Controller
 
     public function getMenu() {
 
-        $menu = $this->m_rep->get('*', false, false, ['type', 'left']);
+        $menu = $this->m_rep->getMenu("left");
 
-        $mBuilder = Menu::make('MyNav', function($m) use ($menu) {
+        $mBuilder = Menu::make('leftNav', function($m) use ($menu) {
 
             foreach($menu as $item) {
 
                 if($item->parent == 0) {
-                    $m->add($item->title,array('url' => $item->path, 'id' => $item->id))->data('icon', $item->icon);
+                    $m->add($item->title,array('url' => route($item->path), 'id' => $item->id))->data('icon', $item->icon);
                 }
                 else {
                     if($m->find($item->parent)) {
-                        $m->find($item->parent)->add($item->title,$item->path)->id($item->id);
+                        $m->find($item->parent)->add($item->title,route($item->path))->id($item->id);
                     }
                 }
             }

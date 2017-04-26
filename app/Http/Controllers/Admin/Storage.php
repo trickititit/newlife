@@ -46,10 +46,11 @@ class Storage extends Controller
                 $img_model->src_folder = $uploadDir;
                 $img_model->org_name = $image->getClientOriginalName();
                 $img_model->new_name = $image_path;
-                $img_model->temp = 1;
                 if($tmp_img == 1) {
+                    $img_model->temp = 1;
                     $img_model->temp_object_id = $obj_id;
                 } else {
+                    $img_model->temp = 0;
                     $img_model->object_id = $obj_id;
                 }
                 $img_model->save();
@@ -60,14 +61,16 @@ class Storage extends Controller
         }
     }
 
-    public function objGetImage() {
+    public function objGetImage(Request $request) {
             $result = array();
-            $files = scandir(public_path() . '/' . config('settings.theme') . '/uploads/images/');                 //1
+            $obj_id = $request['objid'];
+            $scandir = public_path() . '/' . config('settings.theme') . '/uploads/images/'.$obj_id."/";
+            $files = scandir($scandir);                 //1
             if (false !== $files) {
                 foreach ($files as $file) {
                     if ('.' != $file && '..' != $file && !preg_match("/^thumb-.*/", $file)) {       //2
                         $obj['name'] = $file;
-                        $obj['size'] = filesize(public_path() . '/' . config('settings.theme') . '/uploads/images' . "/" . $file);
+                        $obj['size'] = filesize($scandir . $file);
                         $result[] = $obj;
                     }
                 }
@@ -78,24 +81,21 @@ class Storage extends Controller
     public function objDeleteImage(Request $request, ImagesRepository $i_rep) {
         if ($request->has('file')) {
             $filename = $request['file'];
-            $storeFolder = public_path() . '\\' . config('settings.theme') . '\uploads\images\\';
-            $user = Auth::user();
-            $hashed = md5($user->email);
             $obj_id = $request['obj_id'];
             $tmp_img = $request['tmp_img'];
             if ($tmp_img == 1){
-                $uploadDir = $storeFolder."/".$hashed."-".$obj_id;
                 $images = $i_rep->getTmpImg($obj_id);
             } else {
-                $uploadDir = $storeFolder."/".$obj_id;
                 $images = $i_rep->get("*",false, false, ["object_id", $obj_id]);
             }
             foreach ($images as $image) {
                 if ($image->org_name == $filename) {
                     $filename = $image->new_name;
                     $image_id = $image->id;
+                    $uploadDir = $image->src_folder;
                 } else if ($image->new_name == $filename) {
                     $image_id = $image->id;
+                    $uploadDir = $image->src_folder;
                 }
             }
             $del_image = $i_rep->destroy($image_id);
