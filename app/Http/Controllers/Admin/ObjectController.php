@@ -180,37 +180,6 @@ class ObjectController extends AdminController
                                 });
                                 var _ref;
                                 return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
-                            },
-                            init: function () {
-                                thisDropzone = this;
-                                <!-- 4 -->
-                                $.get('".route('adminObjGetImg')."', function (data) {
-                    
-                                    <!-- 5 -->
-                                    $.each(data, function (index, item) {
-                                        //// Create the mock file:
-                                        var mockFile = {
-                                            name: item.name,
-                                            size: item.size,
-                                            status: Dropzone.ADDED,
-                                            accepted: true
-                                        };
-                    
-                                        // Call the default addedfile event handler
-                                        thisDropzone.emit(\"addedfile\", mockFile);
-                    
-                                        // And optionally show the thumbnail of the file:
-                                        //thisDropzone.emit(\"thumbnail\", mockFile, \"uploads/\"+item.name);
-                    
-                                        thisDropzone.createThumbnailFromUrl(mockFile, \"".asset(config('settings.theme'))."/uploads/images/".$this->o_rep->getMaxId()."/\"+item.name);
-                    
-                                        thisDropzone.emit(\"complete\", mockFile);
-                    
-                                        thisDropzone.files.push(mockFile);
-                    
-                                    });
-                    
-                                });
                             }
                         };
                         $(function() {			
@@ -596,7 +565,7 @@ class ObjectController extends AdminController
     public function destroy(Object $object)
     {
         $this->checkUser();
-        if ($this->o_rep->destroy($object->id, true)) {
+        if ($object->forceDelete()) {
             return back()->with(['status' => 'Объект удален']);
         } else {
             return back()->with(['error' => 'Ошибка удаления']);
@@ -670,8 +639,9 @@ class ObjectController extends AdminController
     public function Restore(Object $object)
     {
         $this->checkUser();
-        $object->restore();
-        if ($object->update()) {
+        $object->deletedUser()->dissociate();
+        $object->update();
+        if ($object->restore()) {
             return back()->with(['status' => 'Объект восстановлен']);
         } else {
             return back()->with(['error' => 'Ошибка восстановления']);
@@ -681,6 +651,8 @@ class ObjectController extends AdminController
     public function softDelete(Object $object)
     {
         $this->checkUser();
+        $object->deletedUser()->associate($this->user);
+        $object->update();
         if ($object->delete()) {
             return back()->with(['status' => 'Объект удален']);
         } else {

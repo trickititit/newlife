@@ -9,7 +9,7 @@ abstract class Repository {
 	protected $model = FALSE;
 	
 	
-	public function get($select = '*',$take = FALSE,$pagination = FALSE, $where = FALSE, $count = FALSE) {
+	public function get($select = '*',$take = FALSE,$pagination = FALSE, $where = FALSE, $count = FALSE, $order = FALSE) {
 		
 		$builder = $this->model->select($select);
 		
@@ -23,13 +23,21 @@ abstract class Repository {
 		
 		
 		if($pagination) {
-			return $this->check($builder->paginate(Config::get('settings.paginate')));
+			// Сдедать настройки
+			return $this->check($builder->paginate($pagination));
 		}
 		
 		if($count) {
 			return $builder->count();
 		} else {
-			return $builder->get();	
+		if ($order) {
+			if (is_array($order)) {
+				$builder->orderBy($order[0], $order[1]);
+			} else {
+				$builder->orderBy($order);
+			}
+		}
+			return $builder->get();
 		}
 	}
 
@@ -118,17 +126,13 @@ abstract class Repository {
 		);
 		
 		foreach($leter_array as $leter => $kyr) {
-			$kyr = explode(',',$kyr);
-			
-			$str = str_replace($kyr,$leter, $str);
-			
+			$kyr = explode(',',$kyr);			
+			$str = str_replace($kyr,$leter, $str);			
 		}
 		
 		//  A-Za-z0-9-
-		$str = preg_replace('/(\s|[^A-Za-z0-9\-])+/','_',$str);
-		
-		$str = trim($str,'-');
-		
+		$str = preg_replace('/(\s|[^A-Za-z0-9\-])+/','_',$str);		
+		$str = trim($str,'-');		
 		return $str;
 	}
 	

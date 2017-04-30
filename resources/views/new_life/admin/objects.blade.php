@@ -1,26 +1,35 @@
 <div class="col-md-12">
     <ul class="nav nav-tabs">
     @if($menus)
-                @include(config('settings.theme').'.admin.objectsMenuItems',['items'=>$menus->roots()])
+                @include(config('settings.theme').'.admin.objectsMenuItems',['items'=>$menus->roots(), "type" => $type])
     @endif
-        <select onchange="window.location.href=this.options[this.selectedIndex].value" id="order" name="order">
-            <option value="http://rieltor/cabinet/?order=date">По дате</option>
-            <option value="http://rieltor/cabinet/?order=priceup">Дешевле</option>
-            <option value="http://rieltor/cabinet/?order=pricedown">Дороже</option>
-        </select>
+        {!! Form::select('order', $order_select ,URL::current(), ["onchange" => "window.location.href=this.options[this.selectedIndex].value", "id" => "order"]) !!}
     </ul>
     <!-- Таблица -->
     <div class="tab-content">
         <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th width="1">Фото</th>
+                    <th width="1">Сделка</th>
+                    <th width="30">Обьект</th>
+                    <th width="40">Адрес</th>
+                    <th width="10">Цена</th>
+                    <th >Описание</th>
+                    <th width="10">Доплата</th>
+                    <th >Комментарий</th>
+                    <th width="100">Контакты</th>
+                    <th width="80">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
     @if($objects)
     @foreach($objects as $object)
-            <div class="obj-table-elem">
-                <table class="table table-hover">
-                <tbody>
                 <tr>
-                    <td><div style="width: 30px;">{!! $object->images->isEmpty() ? "" : "<i class=\"fa fa-camera fa-lg\"></i>" !!}</div></td>
-                    <td><div style="width: 30px;">{!!  $object->deal == "Продажа" ? "<i class=\"fa fa-shopping-cart fa-lg\"></i>" : "<i class=\"fa fa-retweet fa-lg\"></i>" !!}</div></td>
-                    <td><div style="width: 110px;">
+                    <td class="td-icon">{!! $object->images->isEmpty() ? "" : "<i class=\"fa fa-camera fa-lg\"></i>" !!}</td>
+                    <td class="td-icon">{!!  $object->deal == "Продажа" ? "<i class=\"fa fa-shopping-cart fa-lg\"></i>" : "<i class=\"fa fa-retweet fa-lg\"></i>" !!}</td>
+                    <td>
                         @if($object->category == 1)
                             <a href="{{$object->id}}">{{$object->rooms}}-к квартира</a><br>{{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
                         @elseif($object->category == 2)
@@ -28,31 +37,47 @@
                         @elseif($object->category == 3)
                             <a href="{{$object->id}}">Комната в {{$object->rooms}}-к</a><br>{{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
                         @endif
-                    </div></td>
-                    <td><div style="width: 130px;">{{ $object->gorod->name }},<br>{{ $object->address }},<br>{{ $object->raion->name }}</div></td>
-                    <td><div style="width: 50px;">{{ $object->price }}</div></td>
-                    <td><div style="width: 300px;">{{ $object->desc }}</div></td>
-                    <td><div style="width: 50px;">{{ $object->surcharge }}</div></td>
-                    <td><div style="width: 300px;">{{ $object->comment }}</div></td>
-                    <td><div style="width: 120px;">+7 {{$object->client->phone}} - {{ $object->client->name }} {{$object->client->father_name}}<br/>
-                     {{--@foreach($object->comforts as $comfort)--}}
-                            {{--{{ $comfort->title }}--}}
-                     {{--@endforeach--}}
-                        </div></td>
-                    <td style="width: 75px">{!! $actions["object".$object->id] !!}</td>
+                    </td>
+                    <td>{{ $object->gorod->name }},<br>{{ $object->address }},<br>{{ $object->raion->name }}</td>
+                    <td>{{ $object->price }}</td>
+                    <td>{{ $object->desc }}</td>
+                    <td>{{ $object->surcharge }}</td>
+                    <td>{{ $object->comment }}</td>
+                    <td >+7 {{$object->client->phone}} - {{ $object->client->name }} {{$object->client->father_name}}<br/>
+                        </td>
+                    <td width="100"><div class="btn-actions centovka">
+                            {!! $actions["object".$object->id] !!}
+                         </div>
+                    </td>
                 </tr>
-                </tbody>
-            </table>
-            </div>
     @endforeach
     @endif
+                </tbody>
+            </table>
         </div>
-        <div id="fine-uploader-gallery"></div>
         <div class="pagina col-md-12">
-            <nav aria-label="Page navigation example">
-            <ul class="pagination centovka">
-                <li class="page-item active"><a class="page-link" href="http://rieltor/cabinet/">1</a></li><li class="page-item"><a class="page-link" href="http://rieltor/cabinet/?page=2">2</a></li>
-            </ul>
+            <nav>
+                <ul class="pagination pagination-sm centovka">
+                @if($objects->lastPage() > 1)
+                    @if($objects->currentPage() !== 1)
+                        <li class="page-item"><a class="page-link" href="{{ $objects->url(($objects->currentPage() - 1)) }}">&laquo;</a></li>
+                    @else
+                        <li class="page-item disabled"><a class="page-link">&laquo;</a></li>
+                    @endif
+                    @for($i = 1; $i <= $objects->lastPage(); $i++)
+                        @if($objects->currentPage() == $i)
+                            <li class="page-item active"><a class="page-link">{{ $i }}</a></li>
+                        @else
+                                <li class="page-item"><a class="page-link" href="{{ $objects->url($i) }}">{{ $i }}</a></li>
+                        @endif
+                    @endfor
+                    @if($objects->currentPage() !== $objects->lastPage())
+                        <li class="page-item"><a class="page-link" href="{{ $objects->url(($objects->currentPage() + 1)) }}">&raquo;</a></li>
+                    @else
+                        <li class="page-item disabled"><a class="page-link">&raquo;</a></li>
+                    @endif
+                @endif
+                 </ul>
             </nav>
         </div>
     </div>

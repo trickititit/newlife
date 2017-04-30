@@ -12,6 +12,24 @@ class ComfortsRepository extends Repository {
         $this->model = $comfort;
     }
 
+    public function addComfort($request) {
+        if($request->has("title")) {
+            $this->model->title = $request->title;
+            $this->model->desc = $request->desc;
+            $this->model->alias = $this->transliterate($request->title);
+            if($this->model->save()) {
+                return ['status' => 'Удобство добавлено'];
+            }
+        } else {
+            return array('error' => 'Нет данных');
+        }
+
+    }
+
+    public function editComfort($request) {
+
+    }
+
     public function getComfortsId($comforts_title) {
         if (!empty($comforts_title)) {
             $query = $this->model->select("id");

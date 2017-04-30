@@ -303,48 +303,71 @@ class ObjectsRepository extends Repository {
         }
     }
 
-    public function getScope($scope, $parameters = false, $count = false) {
+    public function getScope($scope, $parameters = false, $count = false, $order = "created_at", $pagination = 50) {
+        if ($order == "pricedesc") {
+            $order = array("price", "desc");
+        } 
         switch ($scope) {
             case "my":
                 if($count) {
                     $result = $this->model->My()->count();
                 } else {
-                    $result = $this->model->My()->get();
+                    if (is_array($order)) {
+                     $result = $this->model->My()->orderBy($order[0], $order[1])->paginate($pagination); 
+                    } else {
+                     $result = $this->model->My()->orderBy($order)->paginate($pagination);  
+                    }
                 }
                 break;
             case "inwork":
                 if($count) {
                     $result = $this->model->InWork()->count();
                 } else {
-                    $result = $this->model->InWork()->get();
+                    if (is_array($order)) {
+                        $result = $this->model->InWork()->orderBy($order[0], $order[1])->paginate($pagination);
+                    } else {
+                        $result = $this->model->InWork()->orderBy($order)->paginate($pagination);
+                    }
                 }
                 break;
             case "prework":
                 if($count) {
                     $result = $this->model->InPreWork()->count();
                 } else {
-                    $result = $this->model->InPreWork()->get();
+                    if (is_array($order)) {
+                        $result = $this->model->InPreWork()->orderBy($order[0], $order[1])->paginate($pagination);
+                    } else {
+                        $result = $this->model->InPreWork()->orderBy($order)->paginate($pagination);
+                    }
                 }
                 break;
             case "completed":
                 if($count) {
                     $result = $this->model->Completed()->count();
                 } else {
-                    $result = $this->model->Completed()->get();
+                    if (is_array($order)) {
+                        $result = $this->model->Completed()->orderBy($order[0], $order[1])->paginate($pagination);
+                    } else {
+                        $result = $this->model->Completed()->orderBy($order)->paginate($pagination);
+                    }
                 }
                 break;
             case "deleted":
                 if($count) {
                     $result = $this->model->onlyTrashed()->count();
                 } else {
-                    $result = $this->model->onlyTrashed()->get();
+                    if (is_array($order)) {
+                        $result = $this->model->onlyTrashed()->orderBy($order[0], $order[1])->paginate($pagination);
+                    } else {
+                        $result = $this->model->onlyTrashed()->orderBy($order)->paginate($pagination);
+                    }
                 }
                 break;
             case "default":
                 if($count) {
                     $result = $this->get("*", false, false, false, true);
                 } else {
-                    $result = $this->get();
+                    $result = $this->get("*", false, $pagination, false, false, $order);
                 }
                 break;
             default: abort(404);

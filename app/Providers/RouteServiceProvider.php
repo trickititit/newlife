@@ -28,7 +28,7 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot();
 
         Route::bind('object', function ($value) {
-            return \App\Object::where('alias',$value)->first();
+            return \App\Object::withTrashed()->where('alias',$value)->first();
         });
         
     }

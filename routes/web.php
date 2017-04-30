@@ -21,13 +21,9 @@ Route::get('/home', 'HomeController@index');
 
 //admin
 Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
-
-    //admin
-    Route::get('/{type?}',['uses' => 'Admin\IndexController@index','as' => 'adminIndex']);
 //
-//    Route::get('/object/create',['uses' => 'Admin\ObjectsController@createForm','as' => 'adminObjectCreateForm']);
-//    Route::post('/object/create',['uses' => 'Admin\ObjectsController@create','as' => 'adminObjectCreate']);
     Route::resource('/object', 'Admin\ObjectController',['except' => ['index']]);
+    Route::resource('/comfort', 'Admin\ComfortController',['except' => ['show']]);
     Route::group(['prefix' => 'action'],function() {
         Route::put('/prework/{object}',['uses'=>'Admin\ObjectController@InPrework','as'=>'object.prework']);
         Route::put('/unwork/{object}',['uses'=>'Admin\ObjectController@Unwork','as'=>'object.unwork']);
@@ -37,20 +33,12 @@ Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
         Route::put('/restore/{object}',['uses'=>'Admin\ObjectController@Restore','as'=>'object.restore']);
         Route::delete('/softdelete/{object}',['uses'=>'Admin\ObjectController@softDelete','as'=>'object.softDelete']);
     });
-    Route::post('/image/delete',['uses'=>'Admin\Storage@objDeleteImage','as'=>'adminObjDelImg']);
-    Route::post('/image/upload',['uses'=>'Admin\Storage@objUploadImage','as'=>'adminObjUplImg']);
-    Route::get('/image/get',['uses'=>'Admin\Storage@objGetImage','as'=>'adminObjGetImg']);
-
-    
-    
-    // articles
-//    Route::resource('/articles','Admin\ArticlesController');
-//
-//    Route::resource('/permissions','Admin\PermissionsController');
-//
-//    Route::resource('/users','Admin\UsersController');
-//
-//    //menus
-//    Route::resource('/menus','Admin\MenusController');
+    Route::group(['prefix' => 'image'],function() {
+        Route::post('/delete',['uses'=>'Admin\Storage@objDeleteImage','as'=>'adminObjDelImg']);
+        Route::post('/upload',['uses'=>'Admin\Storage@objUploadImage','as'=>'adminObjUplImg']);
+        Route::get('/get',['uses'=>'Admin\Storage@objGetImage','as'=>'adminObjGetImg']);
+    });
+    //INDEX
+    Route::get('/{type?}/{order?}',['uses' => 'Admin\IndexController@index','as' => 'adminIndex']);
 
 });
