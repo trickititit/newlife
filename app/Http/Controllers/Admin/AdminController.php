@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Repositories\AdmMenusRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\SettingsRepository;
 use Menu;
 
 class AdminController extends Controller
@@ -19,6 +20,8 @@ class AdminController extends Controller
     protected $a_rep;
 
     protected $user;
+
+    protected $settings = array();
 
     protected $pub_path;
 
@@ -38,7 +41,7 @@ class AdminController extends Controller
 
     protected $vars;
 
-    public function __construct(AdmMenusRepository $m_rep) {
+    public function __construct(AdmMenusRepository $m_rep, SettingsRepository $settings) {
         $this->pub_path = asset(config('settings.theme'));
         $this->inc_css_lib = array(
             'font-awesome' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/font-awesome/font-awesome.min.css">'),
@@ -54,6 +57,10 @@ class AdminController extends Controller
             'notify' => array('url' => '<script src="'.$this->pub_path.'/js/lib/bootstrap-notify/bootstrap-notify.min.js"></script>'),
         );
         $this->m_rep = $m_rep;
+        $settings_col = $settings->get(["name", "param"]);
+        foreach ($settings_col as $setting_col) {
+            $this->settings[$setting_col->name] = $setting_col->param;
+        }
     }
     
     public function checkUser() {
@@ -64,12 +71,14 @@ class AdminController extends Controller
     }
 
     public function renderOutput() {
+        $this->checkUser();
         $this->vars = array_add($this->vars,'title',$this->title);
 
         $menu = $this->getMenu();
 
         $navigation = view(config('settings.theme').'.admin.navigation')->with('menu',$menu)->render();
         $this->vars = array_add($this->vars,'navigation',$navigation);
+        $this->vars = array_add($this->vars, 'user', $this->user);
 //
         if($this->content) {
             $this->vars = array_add($this->vars,'content',$this->content);

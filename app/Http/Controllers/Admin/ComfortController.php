@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Comfort;
 use App\Repositories\ComfortsRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\AdminController;
@@ -13,7 +14,7 @@ class ComfortController extends AdminController
     protected $c_rep;
     
     public function __construct(ComfortsRepository $c_rep, AdmMenusRepository $m_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu));
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
 
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);
@@ -30,6 +31,7 @@ class ComfortController extends AdminController
      */
     public function index()
     {
+        $this->checkUser();
         $comforts = $this->c_rep->get();
         $this->content = view(config('settings.theme').'.admin.comforts')->with(array("comforts" => $comforts))->render();
         $this->title = 'Удобства';    
@@ -99,8 +101,13 @@ class ComfortController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comfort $comfort)
     {
-        //
+        $this->checkUser();
+         if ($this->c_rep->destroy($comfort->id)) {
+             return back()->with(["status" => "Удобство удалено"]);
+         } else {
+             return back()->with(["error" => "Ошибка удаления"]);
+         }
     }
 }

@@ -21,7 +21,7 @@ class ObjectController extends AdminController
     public $inputs = array();
 
     public function __construct(ObjectsRepository $o_rep, CitiesRepository $city_rep, AreasRepository $area_rep, ComfortsRepository $com_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu));
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
 
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);

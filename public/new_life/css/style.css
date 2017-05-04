@@ -10,6 +10,9 @@
 .btn-actions form {
   display: inline; }
 
+.users-actions form {
+  display: inline; }
+
 .btn-actions .btn {
   top: 0;
   width: 36px !important;
@@ -46,5 +49,9 @@
 
 .margin-left {
   margin-left: 10px; }
+
+.box-typical {
+  width: 100%;
+  float: left; }
 
 /*# sourceMappingURL=style.css.map */

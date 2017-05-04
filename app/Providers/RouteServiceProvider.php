@@ -30,6 +30,14 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind('object', function ($value) {
             return \App\Object::withTrashed()->where('alias',$value)->first();
         });
+
+        Route::bind('comfort', function ($value) {
+            return \App\Comfort::where('alias',$value)->first();
+        });
+
+        Route::bind('user', function ($value) {
+            return \App\User::find($value);
+        });
         
     }
 

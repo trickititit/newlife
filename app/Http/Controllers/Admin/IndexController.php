@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\ObjectsRepository;
-use App\Repositories\AdmMenusRepository;
-use App\Object;
 use Menu;
 use Gate;
 use URL;
@@ -16,22 +13,20 @@ use Route;
 class IndexController extends AdminController {
 
     protected $o_rep;
-    protected $m_rep;    
 
-    public function __construct(ObjectsRepository $o_rep, AdmMenusRepository $m_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu));
+    public function __construct(ObjectsRepository $o_rep) {
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
 
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);
 //        }
         $this->template = config('settings.theme').'.admin.index';
         $this->o_rep = $o_rep;
-        $this->m_rep = $m_rep;
     }
 
     public function index(Request $request, $type = 'default', $order = "created_at") {
         $this->checkUser();
-        $objects = $this->o_rep->getScope($type, false, false, $order, 50);
+        $objects = $this->o_rep->getScope($type, false, false, $order, $this->settings["pagination"]);
         $actions = array();
         foreach ($objects as $object) {
             $actions = array_add($actions,"object".$object->id, $this->getActions($object, $this->user, $type));
@@ -91,7 +86,7 @@ class IndexController extends AdminController {
                 $acceptlink = route('object.accessPreWork',['object'=>$object->alias]);
                 $canсelllink = route('object.cancelPreWork',['object'=>$object->alias]);
                 $who_pre = "<p style='color: #BABABA'>От ".$who."</p>";
-                $accept = "<form action='$acceptlink' method='post'><input type=\"hidden\" name=\"_method\" value=\"PUT\"><input type=\"hidden\" name=\"_token\" value=\"".csrf_token()."\"><button class='btn btn-secondary btn-sm' type='submit' data-toggle=\"tooltip\" data-placement=\"bottom\" title='Удалить'><i class=\"fa fa-check fa-lg\"></i></button></form>";
+                $accept = "<form action='$acceptlink' method='post'><input type=\"hidden\" name=\"_method\" value=\"PUT\"><input type=\"hidden\" name=\"_token\" value=\"".csrf_token()."\"><button class='btn btn-secondary btn-sm' type='submit' data-toggle=\"tooltip\" data-placement=\"bottom\" title='Подтвердить'><i class=\"fa fa-check fa-lg\"></i></button></form>";
                 $canсell = "<form action='$canсelllink' method='post'><input type=\"hidden\" name=\"_method\" value=\"PUT\"><input type=\"hidden\" name=\"_token\" value=\"".csrf_token()."\"><button class='btn btn-secondary btn-sm' type='submit' data-toggle=\"tooltip\" data-placement=\"bottom\" title='Отклонить'><i class=\"fa fa-ban fa-lg\"></i></button></form>";
                 return $who_pre.$accept.$canсell;
             case "completed":

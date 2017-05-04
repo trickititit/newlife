@@ -60,7 +60,9 @@ class ObjectsRepository extends Repository {
                     if($this->model->save()) {
                         $this->i_rep->createImgs($temp_obj_id, $this->model->id);
                         $comforts = $this->c_rep->getComfortsId($request->comfort);
-                        $this->model->comforts()->attach($comforts);
+                        if ($comforts) {
+                            $this->model->comforts()->attach($comforts);
+                        }
                         $this->model->alias = $this->getAlias($this->model);
                         $this->model->update();
                         return ['status' => 'Материал добавлен'];
@@ -99,7 +101,9 @@ class ObjectsRepository extends Repository {
                     if($this->model->save()) {
                         $this->i_rep->createImgs($temp_obj_id, $this->model->id);
                         $comforts = $this->c_rep->getComfortsId($request->comfort);
-                        $this->model->comforts()->attach($comforts);
+                        if ($comforts) {
+                            $this->model->comforts()->attach($comforts);
+                        }
                         $this->model->alias = $this->getAlias($this->model);
                         $this->model->update();
                         return ['status' => 'Материал добавлен'];
@@ -138,7 +142,9 @@ class ObjectsRepository extends Repository {
                     if($this->model->save()) {
                         $this->i_rep->createImgs($temp_obj_id, $this->model->id);
                         $comforts = $this->c_rep->getComfortsId($request->comfort);
-                        $this->model->comforts()->attach($comforts);
+                        if ($comforts) {
+                            $this->model->comforts()->attach($comforts);
+                        }
                         $this->model->alias = $this->getAlias($this->model);
                         $this->model->update();
                         return ['status' => 'Материал добавлен'];

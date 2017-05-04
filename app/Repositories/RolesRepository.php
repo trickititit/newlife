@@ -1,8 +1,8 @@
 <?php
 
-namespace Corp\Repositories;
+namespace App\Repositories;
 
-use Corp\Role;
+use App\Role;
 
 class RolesRepository extends Repository {
 	

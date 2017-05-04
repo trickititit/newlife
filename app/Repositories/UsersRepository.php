@@ -1,8 +1,8 @@
 <?php
 
-namespace Corp\Repositories;
+namespace App\Repositories;
 
-use Corp\User;
+use App\User;
 use Config;
 
 use Gate;
@@ -20,22 +20,20 @@ class UsersRepository extends Repository
 	public function addUser($request) {
 		
 		
-		if (\Gate::denies('create',$this->model)) {
-            abort(403);
-        }
+//		if (\Gate::denies('create',$this->model)) {
+//            abort(403);
+//        }
 		
 		$data = $request->all();
-		
-		$user = $this->model->create([
+
+		$this->model->create([
             'name' => $data['name'],
+			'telefon' => $data['telefon'],
             'login' => $data['login'],
             'email' => $data['email'],
+            'role_id' => $data['role'],
             'password' => bcrypt($data['password']),
         ]);
-		
-		if($user) {
-			$user->roles()->attach($data['role_id']);
-		}
 		
 		return ['status' => 'Пользователь добавлен'];
 		
@@ -45,18 +43,20 @@ class UsersRepository extends Repository
 	public function updateUser($request, $user) {
 		
 		
-		if (\Gate::denies('edit',$this->model)) {
-            abort(403);
-        }
+//		if (\Gate::denies('edit',$this->model)) {
+//            abort(403);
+//        }
 		
 		$data = $request->all();
 		
 		if(isset($data['password'])) {
 			$data['password'] = bcrypt($data['password']);
+		} else {
+			unset($data['password']);
+			unset($data['password_confirmation']);
 		}
 		
 		$user->fill($data)->update();
-		$user->roles()->sync([$data['role_id']]);
 		
 		return ['status' => 'Пользователь изменен'];
 		
@@ -64,15 +64,14 @@ class UsersRepository extends Repository
 	
 	public function deleteUser($user) {
 		
-		if (Gate::denies('edit',$this->model)) {
-            abort(403);
-        }
-		
-		
-		$user->roles()->detach();
-		
+//		if (Gate::denies('edit',$this->model)) {
+//            abort(403);
+//        }
+//		
 		if($user->delete()) {
 			return ['status' => 'Пользователь удален'];	
+		} else {
+			return ["error" => "Ошибка удаления пользователя"];
 		}
 	}
 	

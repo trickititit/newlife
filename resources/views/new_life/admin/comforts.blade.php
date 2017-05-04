@@ -1,4 +1,5 @@
-<h1 class="with-border">Удобства</h1>
+<div class="box-typical box-typical-padding">
+<h1>Удобства</h1>
 <div class="table-responsive">
 <table class="table table-hover">
     <thead>
@@ -16,7 +17,11 @@
                 <td>{{$comfort->title}}</td>
                 <td>{{$comfort->desc}}</td>
                 <td>{{$comfort->alias}}</td>
-                <td><a class="btn btn-danger" href='?view=comfort&do=com_del&id=".$this->comforts[$i]["id"]."'>Удалить</a></td>
+                <td>{!! Form::open(["url" => route('comfort.destroy', ["comfort" => $comfort->alias]), 'method' => "POST", "id" => "comfortDelete"]) !!}
+                    {!! Form::button('Удалить', ['class' => 'btn btn-danger','type'=>'submit']) !!}
+                    {!! Form::hidden('_method', "DELETE") !!}
+                    {!! Form::close() !!}
+                    </td>
             </tr>
         @endforeach
     @endif
@@ -53,4 +58,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>

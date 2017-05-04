@@ -26,10 +26,6 @@ class ComfortsRepository extends Repository {
 
     }
 
-    public function editComfort($request) {
-
-    }
-
     public function getComfortsId($comforts_title) {
         if (!empty($comforts_title)) {
             $query = $this->model->select("id");

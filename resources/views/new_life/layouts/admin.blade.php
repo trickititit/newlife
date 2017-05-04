@@ -52,10 +52,13 @@
                             <img src="{{ asset(config('settings.theme')) }}/img/avatar-2-64.png" alt="">
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-user-menu">
-                            <a class="dropdown-item" href="#"><span class="font-icon glyphicon glyphicon-user"></span>Профиль</a>
-                            <a class="dropdown-item" href="#"><span class="font-icon glyphicon glyphicon-cog"></span>Настройки</a>
+                            <a class="dropdown-item" href="{{route("user.edit", ['user'=>$user->id])}}"><span class="font-icon glyphicon glyphicon-user"></span>Профиль</a>
+                            <a class="dropdown-item" href="{{ route("settings.edit") }}"><span class="font-icon glyphicon glyphicon-cog"></span>Настройки</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"><span class="font-icon glyphicon glyphicon-log-out"></span>Выйти</a>
+                            <a class="dropdown-item" href="{{route("logout")}}" onclick="event.preventDefault();
+                            document.getElementById('logout').submit();"><span class="font-icon glyphicon glyphicon-log-out"></span>Выйти</a>
+                            {!! Form::open(["url" => route('logout'), 'method' => "POST", "id" => "logout", "style" => "display: none;"]) !!}
+                            {!! Form::close() !!}
                         </div>
                     </div>
                 </div><!--.site-header-shown-->
@@ -71,6 +74,15 @@
 
 <div class="page-content">
     <div class="container-fluid">
+        @if (count($errors) > 0)
+            <div class="form-error-text-block">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+    @endif
         <!-- START CONTENT -->
             @yield('content')
         <!-- END CONTENT -->
@@ -79,17 +91,6 @@
 <!-- START JS INCLUDE -->
 @yield('include_js_lib')
 <!-- END JS INCLUDE -->
-<script>
-    $(document).ready(function() {
-        $('.obj-table-elem').click(function () {
-            if($(this).hasClass("obj-max")) {
-                $(this).removeClass("obj-max",250);
-            } else {
-                $(this).addClass("obj-max",250);
-            }
-        });
-    });
-</script>
 <style type="text/css">
 #YMapsID {
     width: 100%;
@@ -112,7 +113,6 @@
     </script>
 @endif
 <!-- END SCRIPT INCLUDE -->
-
 <script src="{{ asset(config('settings.theme')) }}/js/app.js"></script>
 </body>
 </html>

@@ -12,18 +12,20 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect("/login");
 });
 
 Auth::routes();
-
-Route::get('/home', 'HomeController@index');
-
 //admin
 Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
 //
     Route::resource('/object', 'Admin\ObjectController',['except' => ['index']]);
-    Route::resource('/comfort', 'Admin\ComfortController',['except' => ['show']]);
+    Route::resource('/user', 'Admin\UserController');
+    Route::resource('/comfort', 'Admin\ComfortController',['only' => ['index', 'store', 'destroy']]);
+    Route::group(['prefix' => 'settings'],function() {
+       Route::get('/edit', ['uses' => 'Admin\SettingController@edit', "as" => 'settings.edit']);
+       Route::put('/', ['uses' => 'Admin\SettingController@update', "as" => 'settings.update']);
+    });
     Route::group(['prefix' => 'action'],function() {
         Route::put('/prework/{object}',['uses'=>'Admin\ObjectController@InPrework','as'=>'object.prework']);
         Route::put('/unwork/{object}',['uses'=>'Admin\ObjectController@Unwork','as'=>'object.unwork']);

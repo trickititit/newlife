@@ -43,8 +43,8 @@
   -webkit-border-radius: 6px;
           border-radius: 6px;
   display: block;
-  height: 600px;
-  overflow: hidden;
+  height: 620px;
+  overflow: auto;
   width: auto;
 }
 .wizard > .content > .title,
