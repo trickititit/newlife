@@ -45,6 +45,7 @@ class AdminController extends Controller
         $this->pub_path = asset(config('settings.theme'));
         $this->inc_css_lib = array(
             'font-awesome' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/font-awesome/font-awesome.min.css">'),
+            'animate' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/animate.css">'),
             'bootstrap' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/bootstrap/bootstrap.min.css">'),
             'main' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/main.css">'),
             'style' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/style.css">'),
@@ -98,7 +99,7 @@ class AdminController extends Controller
 //
 //        $footer = view(config('settings.theme').'.admin.footer')->render();
 //        $this->vars = array_add($this->vars,'footer',$footer);
-
+        
         return view($this->template)->with($this->vars);
 
 

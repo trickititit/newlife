@@ -288,7 +288,11 @@ $(document).ready(function(){
 
 	// Popovers
 	$('[data-toggle="popover"]').popover({
-		trigger: 'focus'
+		html : true,
+		content: function() {
+			var content = $(this).attr("data-popover-content");
+			return $(content).html();
+		}
 	});
 	
 /* ==========================================================================

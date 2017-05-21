@@ -1,4 +1,7 @@
 <div class="col-md-12">
+    {!! $filter !!}
+</div>
+<div class="col-md-12">
     <ul class="nav nav-tabs">
     @if($menus)
                 @include(config('settings.theme').'.admin.objectsMenuItems',['items'=>$menus->roots(), "type" => $type])

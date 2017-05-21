@@ -15,6 +15,14 @@ Route::get('/', function () {
     return redirect("/login");
 });
 
+Route::get('js/{file}', function($file = null)
+{
+    $path = storage_path().'/app/public/new_life/js/'.$file.".js";
+    if (file_exists($path)) {
+        return Response::download($path);
+    }
+});
+
 Auth::routes();
 //admin
 Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {

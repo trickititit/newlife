@@ -27,7 +27,7 @@
     @yield('include_css_lib')
     <!-- END CSS INCLUDE -->
 </head>
-<body class="with-side-menu control-panel control-panel-compact">
+<body class="with-side-menu control-panel control-panel-compact animated fadeIn">
 
 <header class="site-header">
     <div class="container-fluid">
@@ -82,7 +82,7 @@
                     @endforeach
                 </ul>
             </div>
-    @endif
+        @endif
         <!-- START CONTENT -->
             @yield('content')
         <!-- END CONTENT -->
@@ -112,7 +112,21 @@
     });
     </script>
 @endif
+@if (session('search_status'))
+    <script>
+        $(document).ready(function() {
+            $.notify({
+                icon: 'font-icon font-icon-check-circle',
+                title: '<strong>Результат поиска:</strong>',
+                message: 'Найдено {{ session('search_status') }} объекта.'
+            }, {
+                type: 'success'
+            });
+        });
+    </script>
+@endif
 <!-- END SCRIPT INCLUDE -->
 <script src="{{ asset(config('settings.theme')) }}/js/app.js"></script>
+<script src="{{ url("js/script") }}"></script>
 </body>
 </html>

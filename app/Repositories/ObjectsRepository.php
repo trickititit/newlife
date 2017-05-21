@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\ImagesRepository;
 use App\Repositories\ComfortsRepository;
 use Gate;
+use Illuminate\Support\Facades\Input;
 
 class ObjectsRepository extends Repository {
 
@@ -309,77 +310,326 @@ class ObjectsRepository extends Repository {
         }
     }
 
-    public function getScope($scope, $parameters = false, $count = false, $order = "created_at", $pagination = 50) {
+    public function getScope($scope, $request = false, $count = false, $order = "created_at", $pagination = 50) {
         if ($order == "pricedesc") {
             $order = array("price", "desc");
         } 
         switch ($scope) {
             case "my":
-                if($count) {
-                    $result = $this->model->My()->count();
-                } else {
-                    if (is_array($order)) {
-                     $result = $this->model->My()->orderBy($order[0], $order[1])->paginate($pagination); 
+                if (Input::has("search")) {
+                    $data = Input::except("search");
+                    if ($count) {
+                        $result = $this->model->My()->count();
                     } else {
-                     $result = $this->model->My()->orderBy($order)->paginate($pagination);  
+                        if (is_array($order)) {
+                            $query = $this->model->My()->orderBy($order[0], $order[1]);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        } else {
+                            $query = $this->model->My()->orderBy($order);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        }
+                    }
+                } else {
+                    if ($count) {
+                        $result = $this->model->My()->count();
+                    } else {
+                        if (is_array($order)) {
+                            $result = $this->model->My()->orderBy($order[0], $order[1])->paginate($pagination);
+                        } else {
+                            $result = $this->model->My()->orderBy($order)->paginate($pagination);
+                        }
                     }
                 }
                 break;
             case "inwork":
-                if($count) {
-                    $result = $this->model->InWork()->count();
-                } else {
-                    if (is_array($order)) {
-                        $result = $this->model->InWork()->orderBy($order[0], $order[1])->paginate($pagination);
+                if (Input::has("search")) {
+                    $data = Input::except("search");
+                    if ($count) {
+                        $result = $this->model->InWork()->count();
                     } else {
-                        $result = $this->model->InWork()->orderBy($order)->paginate($pagination);
+                        if (is_array($order)) {
+                            $query = $this->model->InWork()->orderBy($order[0], $order[1]);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        } else {
+                            $query = $this->model->InWork()->orderBy($order);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        }
+                    }
+                } else {
+                    if ($count) {
+                        $result = $this->model->InWork()->count();
+                    } else {
+                        if (is_array($order)) {
+                            $result = $this->model->InWork()->orderBy($order[0], $order[1])->paginate($pagination);
+                        } else {
+                            $result = $this->model->InWork()->orderBy($order)->paginate($pagination);
+                        }
                     }
                 }
                 break;
             case "prework":
-                if($count) {
-                    $result = $this->model->InPreWork()->count();
-                } else {
-                    if (is_array($order)) {
-                        $result = $this->model->InPreWork()->orderBy($order[0], $order[1])->paginate($pagination);
+                if (Input::has("search")) {
+                    $data = Input::except("search");
+                    if ($count) {
+                        $result = $this->model->InPreWork()->count();
                     } else {
-                        $result = $this->model->InPreWork()->orderBy($order)->paginate($pagination);
+                        if (is_array($order)) {
+                            $query = $this->model->InPreWork()->orderBy($order[0], $order[1]);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        } else {
+                            $query = $this->model->InPreWork()->orderBy($order);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        }
+                    }
+                } else {
+                    if ($count) {
+                        $result = $this->model->InPreWork()->count();
+                    } else {
+                        if (is_array($order)) {
+                            $result = $this->model->InPreWork()->orderBy($order[0], $order[1])->paginate($pagination);
+                        } else {
+                            $result = $this->model->InPreWork()->orderBy($order)->paginate($pagination);
+                        }
                     }
                 }
                 break;
             case "completed":
-                if($count) {
-                    $result = $this->model->Completed()->count();
-                } else {
-                    if (is_array($order)) {
-                        $result = $this->model->Completed()->orderBy($order[0], $order[1])->paginate($pagination);
+                if (Input::has("search")) {
+                    $data = Input::except("search");
+                    if ($count) {
+                        $result = $this->model->Completed()->count();
                     } else {
-                        $result = $this->model->Completed()->orderBy($order)->paginate($pagination);
+                        if (is_array($order)) {
+                            $query = $this->model->Completed()->orderBy($order[0], $order[1]);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        } else {
+                            $query = $this->model->Completed()->orderBy($order);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        }
+                    }
+                } else {
+                    if ($count) {
+                        $result = $this->model->Completed()->count();
+                    } else {
+                        if (is_array($order)) {
+                            $result = $this->model->Completed()->orderBy($order[0], $order[1])->paginate($pagination);
+                        } else {
+                            $result = $this->model->Completed()->orderBy($order)->paginate($pagination);
+                        }
                     }
                 }
                 break;
             case "deleted":
-                if($count) {
-                    $result = $this->model->onlyTrashed()->count();
-                } else {
-                    if (is_array($order)) {
-                        $result = $this->model->onlyTrashed()->orderBy($order[0], $order[1])->paginate($pagination);
+                if (Input::has("search")) {
+                    $data = Input::except("search");
+                    if ($count) {
+                        $result = $this->model->onlyTrashed()->count();
                     } else {
-                        $result = $this->model->onlyTrashed()->orderBy($order)->paginate($pagination);
+                        if (is_array($order)) {
+                            $query = $this->model->onlyTrashed()->orderBy($order[0], $order[1]);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        } else {
+                            $query = $this->model->onlyTrashed()->orderBy($order);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        }
+                    }
+                } else {
+                    if ($count) {
+                        $result = $this->model->onlyTrashed()->count();
+                    } else {
+                        if (is_array($order)) {
+                            $result = $this->model->onlyTrashed()->orderBy($order[0], $order[1])->paginate($pagination);
+                        } else {
+                            $result = $this->model->onlyTrashed()->orderBy($order)->paginate($pagination);
+                        }
                     }
                 }
                 break;
             case "default":
-                if($count) {
-                    $result = $this->get("*", false, false, false, true);
+                if (Input::has("search")) {
+                    $data = Input::except("search");
+                    if ($count) {
+                        $result = $this->get("*", false, false, false, true);
+                    } else {
+                        if (is_array($order)) {
+                            $query = $this->model->select("*")->orderBy($order[0], $order[1]);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        } else {
+                            $query = $this->model->select("*")->orderBy($order);
+                            $result = $this->searchObject($data, $pagination, $query);
+                        }
+                    }
                 } else {
-                    $result = $this->get("*", false, $pagination, false, false, $order);
+                    if ($count) {
+                        $result = $this->get("*", false, false, false, true);
+                    } else {
+                        $result = $this->get("*", false, $pagination, false, false, $order);
+                    }
                 }
                 break;
             default: abort(404);
                 break;
         }        
         return $result;
+    }
+
+    private function searchObject($data, $pagination, $query) {
+        switch ($data["category"]) {
+            case "1": $square_min = ($data["square_1_min"] == 10)? 1: $data["square_1_min"];
+                $square_max = ($data["square_1_max"] == 200)? 99999999: $data["square_1_max"];
+                $floor_min = ($data["floor_min"] == 1)? 1: $data["floor_min"];
+                $floor_max = ($data["floor_max"] == 31)? 99999: $data["floor_max"];
+                $floorInObj_min = ($data["floorInObj_1_min"] == 1)? 1: $data["floorInObj_1_min"];
+                $floorInObj_max = ($data["floorInObj_1_max"] == 31)? 999: $data["floorInObj_1_max"];
+                $price_min = ($data["price_min"]== 0)? 1: $data["price_min"];
+                $price_max = ($data["price_max"]== 0)? 999999999: $data["price_max"];
+                $query->whereCategory($data["category"]);
+                if (isset($data["deal"])) {
+                    $query->whereDeal($data["deal"]);
+                }
+                if (isset($data["formObj_1"])) {
+                    $query->whereType($data["formObj_1"]);
+                }
+                if (isset($data["city"])) {
+                    $query->whereCity($data["city"]);
+                }
+                if (isset($data["area".$data["city"]])) {
+                    $query->whereIn("area", $data["area".$data["city"]]);
+                }
+                if (isset($data["typeHouse_1"])) {
+                    $query->whereIn("build_type", $data["typeHouse_1"]);
+                }
+                if (isset($data["room"])) {
+                    $query->whereIn("rooms", $data["room"]);
+                }      
+                if (isset($data["address"])) {
+                    $words = mb_strtolower($data["address"]);
+                    $words = trim($words);
+                    $words = quotemeta($words);
+                    $arraywords = explode(" " ,$words);
+                    $count = 1;
+                    foreach ($arraywords as $word) {
+                        if ($count > 1) {
+                            $query->orWhere("address", "LIKE", "%$word%");
+                        } else {
+                            $query->where("address", "LIKE", "%$word%");
+                        }
+                    }
+                }
+                $query->where("square", ">=", "$square_min");
+                $query->where("square", "<=", "$square_max");
+                $query->where("floor", ">=", "$floor_min");
+                $query->where("floor", "<=", "$floor_max");
+                $query->where("build_floors", ">=", "$floorInObj_min");
+                $query->where("build_floors", "<=", "$floorInObj_max");
+                $query->where("price", ">=", "$price_min");
+                $query->where("price", "<=", "$price_max");      
+                break;
+            case "2":   $square_min = ($data["square_2_min"] == 10)? 1: $data["square_2_min"];
+                $square_max = ($data["square_2_max"] == 500)? 999999999: $data["square_2_max"];
+                $square_earth_min = ($data["square_earth_min"] == 1)? 1: $data["square_earth_min"];
+                $square_earth_max = ($data["square_earth_max"] == 100)? 9999: $data["square_earth_max"];
+                $floorInObj_min = ($data["floorInObj_2_min"] == 1)? 1: $data["floorInObj_2_min"];
+                $floorInObj_max = ($data["floorInObj_2_max"] == 5)? 99999: $data["floorInObj_2_max"];
+                $distance_min = ($data["distance_min"] == 0)? -1: $data["distance_min"];
+                $distance_max = ($data["distance_max"] == 100)? 99999: $data["distance_max"];
+                $price_min = ($data["price_min"]== 0)? 1: $data["price_min"];
+                $price_max = ($data["price_max"]== 0)? 999999999: $data["price_max"];
+                $query->whereCategory($data["category"]);
+                if (isset($data["deal"])) {
+                    $query->whereDeal($data["deal"]);
+                }
+                if (isset($data["formObj_2"])) {
+                    $query->whereIn("type", $data["formObj_2"]);
+                }
+                if (isset($data["city"])) {
+                    $query->whereCity($data["city"]);
+                }
+                if (isset($data["area".$data["city"]])) {
+                    $query->whereIn("area", $data["area".$data["city"]]);
+                }
+                if (isset($data["typeHouse_2"])) {
+                    $query->whereIn("build_type", $data["typeHouse_2"]);
+                }
+                if (isset($data["address"])) {
+                    $words = mb_strtolower($data["address"]);
+                    $words = trim($words);
+                    $words = quotemeta($words);
+                    $arraywords = explode(" " ,$words);
+                    $count = 1;
+                    foreach ($arraywords as $word) {
+                        if ($count > 1) {
+                            $query->orWhere("address", "LIKE", "%$word%");
+                        } else {
+                            $query->where("address", "LIKE", "%$word%");
+                        }
+                    }
+                }
+                $query->where("home_square", ">=", "$square_min");
+                $query->where("home_square", "<=", "$square_max");
+                $query->where("earth_square", ">=", "$square_earth_min");
+                $query->where("earth_square", "<=", "$square_earth_max");
+                $query->where("distance", ">=", "$distance_min");
+                $query->where("distance", "<=", "$distance_max");
+                $query->where("build_floors", ">=", "$floorInObj_min");
+                $query->where("build_floors", "<=", "$floorInObj_max");
+                $query->where("price", ">=", "$price_min");
+                $query->where("price", "<=", "$price_max");
+                break;
+            case "3":   $square_min = ($data["square_1_min"] == 10)? 1: $data["square_1_min"];
+                $square_max = ($data["square_1_max"] == 200)? 99999999: $data["square_1_max"];
+                $floor_min = ($data["floor_min"] == 1)? 1: $data["floor_min"];
+                $floor_max = ($data["floor_max"] == 31)? 99999: $data["floor_max"];
+                $floorInObj_min = ($data["floorInObj_1_min"] == 1)? 1: $data["floorInObj_1_min"];
+                $floorInObj_max = ($data["floorInObj_1_max"] == 31)? 999: $data["floorInObj_1_max"];
+                $price_min = ($data["price_min"]== 0)? 1: $data["price_min"];
+                $price_max = ($data["price_max"]== 0)? 999999999: $data["price_max"];
+                $query->whereCategory($data["category"]);
+                if (isset($data["deal"])) {
+                    $query->whereDeal($data["deal"]);
+                }
+                if (isset($data["formObj_3"])) {
+                    $query->whereType($data["formObj_3"]);
+                }
+                if (isset($data["city"])) {
+                    $query->whereCity($data["city"]);
+                }
+                if (isset($data["area".$data["city"]])) {
+                    $query->whereIn("area", $data["area".$data["city"]]);
+                }
+                if (isset($data["typeHouse_1"])) {
+                    $query->whereIn("build_type", $data["typeHouse_1"]);
+                }
+                if (isset($data["room"])) {
+                    $query->whereIn("rooms", $data["room"]);
+                }
+                if (isset($data["address"])) {
+                    $words = mb_strtolower($data["address"]);
+                    $words = trim($words);
+                    $words = quotemeta($words);
+                    $arraywords = explode(" " ,$words);
+                    $count = 1;
+                    foreach ($arraywords as $word) {
+                        if ($count > 1) {
+                            $query->orWhere("address", "LIKE", "%$word%");
+                        } else {
+                            $query->where("address", "LIKE", "%$word%");
+                        }
+                    }
+                }
+                $query->where("square", ">=", "$square_min");
+                $query->where("square", "<=", "$square_max");
+                $query->where("floor", ">=", "$floor_min");
+                $query->where("floor", "<=", "$floor_max");
+                $query->where("build_floors", ">=", "$floorInObj_min");
+                $query->where("build_floors", "<=", "$floorInObj_max");
+                $query->where("price", ">=", "$price_min");
+                $query->where("price", "<=", "$price_max");
+                break;
+            default:
+                break;
+        }
+        return $query->paginate($pagination);
     }
 }
 
