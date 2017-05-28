@@ -40,6 +40,7 @@ class Storage extends Controller
                 }
                 $str = str_random(8);
                 $image_path = $str . $img_type;
+                $image_thumb_path = "thumb-" . $str . $img_type;
 
                 $img_model = new Image;
                 $img_model->type = $img_type;
@@ -54,10 +55,9 @@ class Storage extends Controller
                     $img_model->object_id = $obj_id;
                 }
                 $img_model->save();
-
-                $img->fit(500, 500)->save($uploadDir ."/". $image_path);
+                $img->save($uploadDir ."/". $image_path);
+                $img->fit(1500, 1000)->save($uploadDir ."/". $image_thumb_path);
             }
-
         }
     }
 
@@ -103,7 +103,7 @@ class Storage extends Controller
                 return false;
             }
             unlink($uploadDir.$filename);
-//            unlink($uploadDir."/". "thumb-". $filename);
+            unlink($uploadDir."/". "thumb-". $filename);
         }
     }
 

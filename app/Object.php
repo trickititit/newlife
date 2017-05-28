@@ -66,5 +66,9 @@ class Object extends Model
         $user_id = Auth::user()->id;
         return $query->whereCompleted_id($user_id);
     }
+
+    public function scopeSpecOffer ($query) {
+        return $query->whereSpec_offer(1);
+    }
     
 }

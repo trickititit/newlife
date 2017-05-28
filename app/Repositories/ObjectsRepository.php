@@ -46,6 +46,7 @@ class ObjectsRepository extends Repository {
                 $this->model->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                 $this->model->geo = $request->obj_geo;
                 $this->model->created_id = $user->id;
+                $this->model->spec_offer = (isset($request->spec_offer)? 1 : null);
                 $client = new \stdClass;
                 $client->name = $request->client_name;
                 $client->family = $request->client_family;
@@ -87,6 +88,7 @@ class ObjectsRepository extends Repository {
                     $this->model->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $this->model->geo = $request->obj_geo;
                     $this->model->created_id = $user->id;
+                    $this->model->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
                     $client->family = $request->client_family;
@@ -128,6 +130,7 @@ class ObjectsRepository extends Repository {
                     $this->model->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $this->model->geo = $request->obj_geo;
                     $this->model->created_id = $user->id;
+                    $this->model->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
                     $client->family = $request->client_family;
@@ -181,6 +184,7 @@ class ObjectsRepository extends Repository {
                     $object->price =  preg_replace("/[^0-9]/", '',$request->obj_price);
                     $object->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $object->geo = $request->obj_geo;
+                    $object->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
                     $client->family = $request->client_family;
@@ -222,6 +226,7 @@ class ObjectsRepository extends Repository {
                     $object->price =  preg_replace("/[^0-9]/", '',$request->obj_price);
                     $object->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $object->geo = $request->obj_geo;
+                    $object->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
                     $client->family = $request->client_family;
@@ -263,6 +268,7 @@ class ObjectsRepository extends Repository {
                     $object->price =  preg_replace("/[^0-9]/", '',$request->obj_price);
                     $object->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $object->geo = $request->obj_geo;
+                    $object->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
                     $client->family = $request->client_family;
@@ -630,6 +636,34 @@ class ObjectsRepository extends Repository {
                 break;
         }
         return $query->paginate($pagination);
+    }
+
+    public function getObjImage($object) {
+        switch ($object->category) {
+            case "1": $image = ($object->rooms > 5) ? "flat-6.svg" : "flat-".$object->rooms.".svg";
+                break;
+            case "2": $image = "house.svg";
+                break;
+            case "3": $image = "room.svg";
+                break;
+            default: $image = "";
+                break;
+        }
+        return $image;
+    }
+
+    public function getTitle($object) {
+        switch ($object->category) {
+            case "1": $title = $object->rooms."-к квартира ".$object->square." м² ".$object->floor."/".$object->build_floors." эт.";
+                break;
+            case "2": $title = $object->type." ".$object->home_square." м² на участке ".$object->earth_square." сот.";
+                break;
+            case "3": $title = "Комната ".$object->square." м²  в ".$object->rooms."-к ".$object->floor."/".$object->build_floors." эт.";
+                break;
+            default: $title = "";
+                break;
+        }
+        return $title;
     }
 }
 

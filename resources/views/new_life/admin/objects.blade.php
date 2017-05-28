@@ -34,11 +34,11 @@
                     <td class="td-icon">{!!  $object->deal == "Продажа" ? "<i class=\"fa fa-shopping-cart fa-lg\"></i>" : "<i class=\"fa fa-retweet fa-lg\"></i>" !!}</td>
                     <td>
                         @if($object->category == 1)
-                            <a href="{{$object->id}}">{{$object->rooms}}-к квартира</a><br>{{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
+                            <a href="{{route('site.object',['object'=>$object->alias])}}">{{$object->rooms}}-к квартира</a><br>{{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
                         @elseif($object->category == 2)
-                            <a href="{{$object->id}}">{{$object->type}}</a><br>{{$object->home_square}} м² на участке {{$object->earth_square}}<br>{{ $object->created_at->format('m/d/Y') }}
+                            <a href="{{route('site.object',['object'=>$object->alias])}}">{{$object->type}}</a><br>{{$object->home_square}} м² на участке {{$object->earth_square}}<br>{{ $object->created_at->format('m/d/Y') }}
                         @elseif($object->category == 3)
-                            <a href="{{$object->id}}">Комната в {{$object->rooms}}-к</a><br>{{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
+                            <a href="{{route('site.object',['object'=>$object->alias])}}">Комната в {{$object->rooms}}-к</a><br>{{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.<br>{{ $object->created_at->format('m/d/Y') }}
                         @endif
                     </td>
                     <td>{{ $object->gorod->name }},<br>{{ $object->address }},<br>{{ $object->raion->name }}</td>

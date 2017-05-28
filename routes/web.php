@@ -15,7 +15,9 @@ Route::get('/', function () {
     return redirect("/login");
 });
 
-Route::get('js/{file}', function($file = null)
+Route::get('/object/{object}', ['uses' => 'ObjectController@index', 'as' => 'site.object']);
+
+Route::get('/js/{file}', function($file = null)
 {
     $path = storage_path().'/app/public/new_life/js/'.$file.".js";
     if (file_exists($path)) {

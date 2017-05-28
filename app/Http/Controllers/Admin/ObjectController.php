@@ -9,6 +9,7 @@ use App\Repositories\ObjectsRepository;
 use App\Repositories\CitiesRepository;
 use App\Repositories\AreasRepository;
 use App\Repositories\ComfortsRepository;
+use App\JavaScript\JavaScriptMaker;
 use Gate;
 use Carbon\Carbon;
 
@@ -67,7 +68,7 @@ class ObjectController extends AdminController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(JavaScriptMaker $jsmaker)
     {
         $this->checkUser();
         $cities = $this->city_rep->get();
@@ -82,192 +83,7 @@ class ObjectController extends AdminController
         }
         $this->inputs = array_add($this->inputs, "obj_city", $obj_city);
         $comforts = $this->com_rep->get();
-        $this->inc_js = '<script>
-                ymaps.ready(function () {
-                var myMap = window.map = new ymaps.Map(\'YMapsID\', {
-                            center: [48.7979,44.7462],
-                            zoom: 16,
-                            behaviors: [\'default\']
-                        }),
-                        searchControl = new SearchAddress(myMap, $(\'#objCreate\'));
-                myMap.controls.add(
-                        new ymaps.control.ZoomControl()
-                );
-                myMap.controls.add(\'typeSelector\')
-                });
-                    $(function() {
-                        var form = $("#objCreate");
-                        form.validate({                           
-                            rules: {                               
-                                obj_address: {
-                                    required: true,
-                                },
-                            },
-                            messages: {
-                                obj_address: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_price: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_doplata: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_square: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_house_square: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_earth_square: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                client_phone: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                client_mail: {
-                                email: "Введите корректный Email",
-                                },
-                            },
-                            errorPlacement: function errorPlacement(error, element) { element.closest(\'.form-group\').find(\'.form-control\').after(error); },
-                            highlight: function(element) {
-                                $(element).closest(\'.form-group\').addClass(\'has-error\');
-                            },
-                            unhighlight: function(element) {
-                                $(element).closest(\'.form-group\').removeClass(\'has-error\');
-                            }
-                        });
-                        form.children("div").steps({
-                            headerTag: "h3",
-                            bodyTag: "section",
-                            transitionEffect: "slideLeft",
-                            onStepChanging: function (event, currentIndex, newIndex)
-                            {
-                                form.validate().settings.ignore = ":disabled,:hidden";
-                                return form.valid();
-                            },
-                            onFinishing: function (event, currentIndex)
-                            {
-                                form.validate().settings.ignore = ":disabled,:hidden";
-                                return form.valid();
-                            },                                                    
-                            onFinished: function (event, currentIndex) {
-                                form.submit();
-                            },
-                            labels: {
-                                finish: "Создать",
-                                next: "Далее",
-                                previous: "Назад"
-                            }
-                        });
-                    });
-                    Dropzone.options.myDropzone = {
-                            paramName: "image",
-                            acceptedFiles: "image/*",
-                            maxFilesize: 100,
-                            addRemoveLinks: true,
-                            maxFiles: 20,
-                            removedfile: function(file) {
-                                var id = $(\'#obj-id\').val();
-                                var name = file.name;
-                                var tmp_img = $(\'#tmp-img\').val();
-                                var token = \'' .csrf_token()."';
-                                $.ajax({
-                                    type: 'POST',
-                                    url: '".route('adminObjDelImg')."',
-                                    data: \"file=\"+name+\"&obj_id=\"+id+\"&tmp_img=\"+tmp_img+\"&_token=\"+token,
-                                    dataType: 'html'
-                                });
-                                var _ref;
-                                return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
-                            }
-                        };
-                        $(function() {			
-                            $(\"#comforts-no-border\").multiPicker({
-                                selector	: \"checkbox\",
-                                cssOptions : {
-                                    size 	  : \"large\"
-                                }
-                            });
-                        });
-		$(document).ready(function() {
-    $('#obj_type').change(function () {
-        var myChoise = $ ('#obj_type :selected').val();
-        if (myChoise == 2) {
-            $('#obj_form_1').hide();
-            $('#room').hide();
-            $('#build_type_1').hide();
-            $('#floor').hide();
-            $('#home_floors_1').hide();
-            $('#square').hide();
-            $('#obj_form_3').hide();
-            $('#earth_square').show();
-            $('#distance').show();
-            $('#house_square').show();
-            $('#build_type_2').show();
-            $('#obj_form_2').show();
-            $('#home_floors_2').show();
-        } else if (myChoise == 3) {
-            $('#obj_form_3').show();
-            $('#obj_form_2').hide();
-            $('#obj_form_1').hide();
-            $('#room').show();
-            $('#build_type_1').show();
-            $('#floor').show();
-            $('#home_floors_1').show();
-            $('#square').show();
-            $('#earth_square').hide();
-            $('#distance').hide();
-            $('#house_square').hide();
-            $('#build_type_2').hide();
-            $('#home_floors_2').hide();
-        } else {
-            $('#obj_form_1').show();
-            $('#room').show();
-            $('#build_type_1').show();
-            $('#floor').show();
-            $('#home_floors_1').show();
-            $('#square').show();
-            $('#obj_form_3').hide();
-            $('#earth_square').hide();
-            $('#distance').hide();
-            $('#house_square').hide();
-            $('#build_type_2').hide();
-            $('#obj_form_2').hide();
-            $('#home_floors_2').hide();
-        }
-    });
-    
-    $('#obj_city select').change(function () {
-        var myChoise = $(this).val();
-        $('#obj_city select option').each(function () {
-                var myChoise2 = $(this).val();
-				if (myChoise2 == myChoise) {
-					$('#obj_area'+myChoise).show();
-				} else {
-					$('#obj_area'+myChoise2).hide();
-				}
-			});
-        });
-        
-            $('#price input').keyup(function(){
-                var price = $('#price input').val(),
-                    square = $('#square input').val();
-                if ( $('#obj_type :selected').val() == '2' ) {
-                    square = $('#house_square input').val();
-                }
-                if ( square.length !== 0 ) {
-                    price =  price.replace(/[^0-9]+/g,'');
-                    square =  square.replace(/[^0-9]+/g,'');
-                    pricesquare = Math.round(price/square);
-                    pricesquare = (pricesquare + '');          
-                    pricesquare = pricesquare.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1\.');
-                    $('#price_square input').attr('value', pricesquare);
-                }
-            });
-    
-    });
-        </script>";
+        $jsmaker->setJs("obj-create");
         $rand_obj_id = rand(1,1000);
         $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array('cities' => $cities, "obj_id" => $rand_obj_id, "comforts" => $comforts, "inputs" => $this->inputs))->render();
         $this->title = 'Создание нового объекта';
@@ -308,7 +124,7 @@ class ObjectController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Object $object)
+    public function edit(JavaScriptMaker $jsmaker, Object $object)
     {
         $this->checkUser();
         $cities = $this->city_rep->get();
@@ -323,211 +139,7 @@ class ObjectController extends AdminController
         }
         $this->inputs = array_add($this->inputs, "obj_city", $obj_city);
         $comforts = $this->com_rep->get();
-        $this->inc_js = '<script>
-                    $(function() {
-                        var form = $("#objCreate");
-                        form.validate({                           
-                            rules: {                               
-                                obj_address: {
-                                    required: true,
-                                },
-                            },
-                            messages: {
-                                obj_address: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_price: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_doplata: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_square: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_house_square: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                obj_earth_square: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                client_phone: {
-                                required: "Это поле обязательно для заполнения",
-                                },
-                                client_mail: {
-                                email: "Введите корректный Email",
-                                },
-                            },
-                            errorPlacement: function errorPlacement(error, element) { element.closest(\'.form-group\').find(\'.form-control\').after(error); },
-                            highlight: function(element) {
-                                $(element).closest(\'.form-group\').addClass(\'has-error\');
-                            },
-                            unhighlight: function(element) {
-                                $(element).closest(\'.form-group\').removeClass(\'has-error\');
-                            }
-                        });
-                        form.children("div").steps({
-                            headerTag: "h3",
-                            bodyTag: "section",
-                            transitionEffect: "slideLeft",
-                            onStepChanging: function (event, currentIndex, newIndex)
-                            {
-                                form.validate().settings.ignore = ":disabled,:hidden";
-                                return form.valid();
-                            },
-                            onFinishing: function (event, currentIndex)
-                            {
-                                form.validate().settings.ignore = ":disabled,:hidden";
-                                return form.valid();
-                            },                                                    
-                            onFinished: function (event, currentIndex) {
-                                form.submit();
-                            },
-                            labels: {
-                                finish: "Сохранить",
-                                next: "Далее",
-                                previous: "Назад"
-                            }
-                        });
-                    });
-                    Dropzone.options.myDropzone = {
-                            paramName: "image",
-                            acceptedFiles: "image/*",
-                            maxFilesize: 100,
-                            addRemoveLinks: true,
-                            maxFiles: 20,
-                            removedfile: function(file) {
-                                var id = $(\'#obj-id\').val();
-                                var name = file.name;
-                                var token = \'' .csrf_token()."';
-                                $.ajax({
-                                    type: 'POST',
-                                    url: '".route('adminObjDelImg')."',
-                                    data: \"file=\"+name+\"&obj_id=\"+id+\"&_token=\"+token,
-                                    dataType: 'html'
-                                });
-                                var _ref;
-                                return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
-                            },
-                            init: function () {
-                                thisDropzone = this;                               
-                                var id = $('#obj-id').val();
-                                <!-- 4 -->
-                                $.get('".route('adminObjGetImg')."',{ objid: id}).done( function (data) {
-                                    $.each(data, function (index, item) {
-                                        //// Create the mock file:
-                                        var mockFile = {
-                                            name: item.name,
-                                            size: item.size,
-                                            status: Dropzone.ADDED,
-                                            accepted: true
-                                        };
-                    
-                                        // Call the default addedfile event handler
-                                        thisDropzone.emit(\"addedfile\", mockFile);
-                    
-                                        // And optionally show the thumbnail of the file:
-                                        //thisDropzone.emit(\"thumbnail\", mockFile, \"uploads/\"+item.name);
-                    
-                                        thisDropzone.createThumbnailFromUrl(mockFile, \"".asset(config('settings.theme'))."/uploads/images/".$object->id."/\"+item.name);
-                    
-                                        thisDropzone.emit(\"complete\", mockFile);
-                    
-                                        thisDropzone.files.push(mockFile);
-                    
-                                    });
-                    
-                                });
-                            }
-                        };
-                        $(function() {			
-                            $(\"#comforts-no-border\").multiPicker({
-                                selector	: \"checkbox\",
-                                prePopulate : ['".$this->getEditComforts($object)."'],
-                                cssOptions : {
-                                    size 	  : \"large\"
-                                }
-                            });
-                        });
-		$(document).ready(function() {
-		".$this->getEditScript($object)."
-    $('#obj_type').change(function () {
-        var myChoise = $ ('#obj_type :selected').val();
-        if (myChoise == 2) {
-            $('#obj_form_1').hide();
-            $('#room').hide();
-            $('#build_type_1').hide();
-            $('#floor').hide();
-            $('#home_floors_1').hide();
-            $('#square').hide();
-            $('#obj_form_3').hide();
-            $('#earth_square').show();
-            $('#distance').show();
-            $('#house_square').show();
-            $('#build_type_2').show();
-            $('#obj_form_2').show();
-            $('#home_floors_2').show();
-        } else if (myChoise == 3) {
-            $('#obj_form_3').show();
-            $('#obj_form_2').hide();
-            $('#obj_form_1').hide();
-            $('#room').show();
-            $('#build_type_1').show();
-            $('#floor').show();
-            $('#home_floors_1').show();
-            $('#square').show();
-            $('#earth_square').hide();
-            $('#distance').hide();
-            $('#house_square').hide();
-            $('#build_type_2').hide();
-            $('#home_floors_2').hide();
-        } else {
-            $('#obj_form_1').show();
-            $('#room').show();
-            $('#build_type_1').show();
-            $('#floor').show();
-            $('#home_floors_1').show();
-            $('#square').show();
-            $('#obj_form_3').hide();
-            $('#earth_square').hide();
-            $('#distance').hide();
-            $('#house_square').hide();
-            $('#build_type_2').hide();
-            $('#obj_form_2').hide();
-            $('#home_floors_2').hide();
-        }
-    });   
-        
-    $('#obj_city select').change(function () {
-        var myChoise = $(this).val();
-        $('#obj_city select option').each(function () {
-                var myChoise2 = $(this).val();
-				if (myChoise2 == myChoise) {
-					$('#obj_area'+myChoise).show();
-				} else {
-					$('#obj_area'+myChoise2).hide();
-				}
-			});
-        });
-        
-            $('#price input').keyup(function(){
-                var price = $('#price input').val(),
-                    square = $('#square input').val();
-                if ( $('#obj_type :selected').val() == '2' ) {
-                    square = $('#house_square input').val();
-                }
-                if ( square.length !== 0 ) {
-                    price =  price.replace(/[^0-9]+/g,'');
-                    square =  square.replace(/[^0-9]+/g,'');
-                    pricesquare = Math.round(price/square);
-                    pricesquare = (pricesquare + '');          
-                    pricesquare = pricesquare.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1\.');
-                    $('#price_square input').attr('value', pricesquare);
-                }
-            });
-    
-    });
-        </script>";
+        $jsmaker->setJs("obj-edit", $object);
         $object->client = json_decode($object->client);
         $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array("object" => $object,'cities' => $cities, "obj_id" => $object->id, "comforts" => $comforts, "inputs" => $this->inputs))->render();
         $this->title = 'Редактирование объекта';
@@ -731,6 +343,5 @@ class ObjectController extends AdminController
             }
         }
         return implode("','", $comforts_id);
-
     }
 }

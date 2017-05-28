@@ -29,7 +29,6 @@ class IndexController extends AdminController {
         
         $this->inc_css_lib = array_add($this->inc_css_lib,  'adm-filter', array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/adm.filter.css">'));
         $this->inc_css_lib = array_add($this->inc_css_lib,  'jq-ui', array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/jqueryui/jquery-ui.min.css">'));
-        $this->inc_js_lib = array_add($this->inc_js_lib,'script',array('url' => '<script src="'.$this->pub_path.'/js/script.js"></script>'));
         $this->inc_js_lib = array_add($this->inc_js_lib,'jq-ui',array('url' => '<script src="'.$this->pub_path.'/js/lib/jqueryui/jquery-ui.min.js"></script>'));
         $this->template = config('settings.theme').'.admin.index';
         $this->o_rep = $o_rep;

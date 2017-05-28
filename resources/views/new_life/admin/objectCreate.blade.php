@@ -2,7 +2,7 @@
     <header class="box-typical-header">
         <div class="tbl-row">
             <div class="tbl-cell tbl-cell-title">
-                <h3 id="h3-create-obj">Создание нового объекта</h3> <button id="upload-img" class="btn btn-primary clearfix" data-toggle="modal" data-target="#myModal">
+                <h3 id="h3-create-obj">{{ (isset($object->id)) ? "Редактирование объекта" : "Создание нового объекта" }}</h3> <button id="upload-img" class="btn btn-primary clearfix" data-toggle="modal" data-target="#myModal">
                     Загрузить изображения
                 </button>
             </div>
@@ -53,6 +53,15 @@
                                 </div>
                             @endif
                         @endforeach
+                    </div>
+                    <div class="col-md-12">
+                        <h4 class="m-t-md">Настройки</h4>
+                        <div class="col-md-3">
+                            <div class="checkbox-bird">
+                                {!! Form::checkbox('spec_offer', "1", (isset($object->spec_offer) ? true : false) , ["id" => "spec_offer"]) !!}
+                                <label for="spec_offer">Специальное предложение</label>
+                            </div>
+                        </div>
                     </div>
                 </section>
                 <h3>Адрес</h3>
