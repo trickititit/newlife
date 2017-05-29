@@ -15,7 +15,7 @@ class JavaScriptMaker {
     protected $typeScript;
     protected $script_js;
 
-    public function setJs($type, $request = "", $static = true) {
+    public function setJs($type, $request = "", $static = true, $token = "") {
         $this->script_js = "
         $('#amount-area_1').click(function () {
         $('#area_1_search').toggle();
@@ -1404,11 +1404,11 @@ class JavaScriptMaker {
                                 var id = $('#obj-id').val();
                                 var name = file.name;
                                 var tmp_img = $('#tmp-img').val();
-                                var token = '".csrf_token()."';
+                                var token = \"$token\";
                                 $.ajax({
                                     type: 'POST',
                                     url: '".route('adminObjDelImg')."',
-                                    data: \"file = \"+name+\" & obj_id = \"+id+\" & tmp_img = \"+tmp_img+\" & _token = \"+token,
+                                    data: \"file=\"+name+\"&obj_id=\"+id+\"&tmp_img=\"+tmp_img+\"&_token=\"+token,
                                     dataType: 'html'
                                 });
                                 var _ref;
@@ -1582,11 +1582,11 @@ class JavaScriptMaker {
                             removedfile: function(file) {
                                 var id = $('#obj-id').val();
                                 var name = file.name;
-                                var token = '" .csrf_token(). "';
+                                var token = \"$token\";
                                 $.ajax({
                                     type: 'POST',
                                     url: '".route('adminObjDelImg')."',
-                                    data: \"file = \"+name+\" & obj_id = \"+id+\" & _token = \"+token,
+                                    data: \"file=\"+name+\"&obj_id=\"+id+\"&_token=\"+token,
                                     dataType: 'html'
                                 });
                                 var _ref;

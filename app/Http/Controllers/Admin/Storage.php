@@ -19,19 +19,19 @@ class Storage extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             if ($image->isValid()) {
-                $storeFolder = public_path() . '\\' . config('settings.theme') . '\uploads\images\\';   //2
+                $storeFolder = public_path() . '/' . config('settings.theme') . '/uploads/images/';   //2
                 $user = Auth::user();
                 $hashed = md5($user->email);
                 $data = $request->except('_token','image');
                 $obj_id = $data["obj_id"];
                 $tmp_img = $data["tmp_img"];
                 if ($tmp_img == 1){
-                    $uploadDir = $storeFolder.$hashed."-".$obj_id."\\";
+                    $uploadDir = $storeFolder.$hashed."-".$obj_id;
                 } else {
-                    $uploadDir = $storeFolder.$obj_id."\\";
+                    $uploadDir = $storeFolder.$obj_id;
                 }
                 if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir);
+                    mkdir($uploadDir, 0777);
                 }
                 $img = Photo::make($image);
                 $img_type = $this->getTypeImg($img->mime());
@@ -102,7 +102,7 @@ class Storage extends Controller
             if (!$del_image) {
                 return false;
             }
-            unlink($uploadDir.$filename);
+            unlink($uploadDir."/".$filename);
             unlink($uploadDir."/". "thumb-". $filename);
         }
     }
