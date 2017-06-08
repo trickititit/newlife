@@ -1,21 +1,15 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+
+
 
 Route::get('/', function () {
     return redirect("/login");
 });
 
 Route::get('/object/{object}', ['uses' => 'ObjectController@index', 'as' => 'site.object']);
+
+Route::get('/front', ['uses' => 'IndexController@index', 'as' => 'site.index']);
 
 Route::get('/js/{file}', function($file = null)
 {
@@ -44,6 +38,7 @@ Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
         Route::put('/activate/{object}',['uses'=>'Admin\ObjectController@Activate','as'=>'object.activate']);
         Route::put('/restore/{object}',['uses'=>'Admin\ObjectController@Restore','as'=>'object.restore']);
         Route::delete('/softdelete/{object}',['uses'=>'Admin\ObjectController@softDelete','as'=>'object.softDelete']);
+        Route::get('/export/{user?}',['uses'=>'Admin\ObjectController@export','as'=>'object.export']);
     });
     Route::group(['prefix' => 'image'],function() {
         Route::post('/delete',['uses'=>'Admin\Storage@objDeleteImage','as'=>'adminObjDelImg']);

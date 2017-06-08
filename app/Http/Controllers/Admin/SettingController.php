@@ -13,7 +13,7 @@ class SettingController extends AdminController
     protected $s_rep;
 
     public function __construct(SettingsRepository $s_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()), new \App\User);
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);
 //        }

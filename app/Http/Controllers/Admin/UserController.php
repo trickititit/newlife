@@ -6,6 +6,7 @@ use App\User;
 use App\Repositories\UsersRepository;
 use App\Repositories\RolesRepository;
 use Illuminate\Http\Request;
+use Photo;
 use App\Http\Requests\UserRequest;
 use App\Repositories\AdmMenusRepository;
 
@@ -14,13 +15,13 @@ class UserController extends AdminController
 
     protected $u_rep;
     protected $r_rep;
-    protected $inputs = array();
 
     public function __construct(RolesRepository $r_rep ,UsersRepository $u_rep, AdmMenusRepository $m_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()), new \App\User);
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);
 //        }
+        $this->inc_js_lib = array_add($this->inc_js_lib, 'filestyle', array('url' => '<script src="'.$this->pub_path.'/js/bootstrap-filestyle.min.js"></script>'));
         $this->template = config('settings.theme').'.admin.index';
         $this->u_rep = $u_rep;
         $this->r_rep = $r_rep;
@@ -68,6 +69,13 @@ class UserController extends AdminController
     public function store(UserRequest $request)
     {
         $this->checkUser();
+        // @FIXME: Доделать изображения!
+//        $image = $request->file('image');
+//        if ($image->isValid()) {
+//            $storeFolder = public_path() . '/' . config('settings.theme') . '/uploads/images/';   //2
+//            $img = Photo::make($image);
+//            $img->fit(1500, 1000)->save($uploadDir ."/". $image_thumb_path);
+//        }
         $result = $this->u_rep->addUser($request);
         if(is_array($result) && !empty($result['error'])) {
             return back()->with($result);

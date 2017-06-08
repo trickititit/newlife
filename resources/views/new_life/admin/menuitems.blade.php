@@ -7,7 +7,11 @@
         </span>
             <ul>
             @foreach($item->children() as $children)
-              <li><a href="{{ $children->url() }}"><span class="lbl">{{ $children->title }}</span></a></li>
+                @if($children->title == "Отчет по объектам")
+                    <li><a {{$children->data_b }}><span class="lbl">{{ $children->title }}</span></a></li>
+                @else
+                    <li><a href="{{ $children->url() }}"><span class="lbl">{{ $children->title }}</span></a></li>
+                @endif
             @endforeach
              </ul>
     @else

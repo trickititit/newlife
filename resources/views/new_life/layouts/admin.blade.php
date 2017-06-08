@@ -69,7 +69,7 @@
 <!-- END MAIN NAVIGATION -->
 
 <div class="page-content">
-    <div class="container-fluid">
+    <div class="container">
         @if (count($errors) > 0)
             <div class="form-error-text-block">
                 <ul>
@@ -79,9 +79,9 @@
                 </ul>
             </div>
         @endif
-        <!-- START CONTENT -->
-            @yield('content')
-        <!-- END CONTENT -->
+<!-- START CONTENT -->
+    @yield('content')
+<!-- END CONTENT -->
     </div><!--.container-fluid-->
 </div><!--.page-content-->
 <!-- START JS INCLUDE -->

@@ -5,7 +5,7 @@
  * Date: 15.05.2017
  * Time: 22:43
  */
-namespace App\JavaScript;
+namespace App\Components;
 
 use Storage;
 
@@ -1708,6 +1708,15 @@ class JavaScriptMaker {
                 });
             });
                 ";
+               break;
+           case "front": $this->content = "$(document).ready(function () {
+            $(function() {
+                $('#da-slider').cslider({
+                    autoplay	: true,
+                    bgincrement	: 450
+                });
+            });
+        });";
                break;
            default:
                break;

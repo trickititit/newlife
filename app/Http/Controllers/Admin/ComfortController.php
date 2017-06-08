@@ -14,7 +14,7 @@ class ComfortController extends AdminController
     protected $c_rep;
     
     public function __construct(ComfortsRepository $c_rep, AdmMenusRepository $m_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()), new \App\User);
 
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);

@@ -8,7 +8,7 @@ use App\Repositories\ObjectsRepository;
 use App\Repositories\CitiesRepository;
 use App\Repositories\AreasRepository;
 use Illuminate\Support\Facades\Session;
-use App\JavaScript\JavaScriptMaker;
+use App\Components\JavaScriptMaker;
 use Menu;
 use Gate;
 use URL;
@@ -41,8 +41,9 @@ class ObjectController extends SiteController
     public function index(JavaScriptMaker $jsmaker, Object $object) {
         $this->title = $this->o_rep->getTitle($object);
         $obj_image= $this->o_rep->getObjImage($object);
+        $price = number_format($object->price, 0, '', ' ');
         $gallery = view(config('settings.theme').'.gallery')->with(array("images" => $object->images));
-        $this->content = view(config('settings.theme').'.object')->with(array("title" => $this->title, "object" => $object, "gallery" => $gallery, "obj_image" => $obj_image));
+        $this->content = view(config('settings.theme').'.object')->with(array("title" => $this->title, "object" => $object, "gallery" => $gallery, "obj_image" => $obj_image, "price" => $price));
         $jsmaker->setJs("obj-view", $object, ($this->spec_offer_count > 4)? false : true);
         return $this->renderOutput();
     }

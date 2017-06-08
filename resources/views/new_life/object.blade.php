@@ -2,13 +2,16 @@
     <div class="col-md-2 obj-icon">
         <img class="center" src="{{ asset(config('settings.theme')) }}/img/svg/{{$obj_image}}">
     </div>
-    <div class="col-md-10">
+    <div class="col-md-7">
         <div class="col-md-12 title_view">
              {{$object->address}}. {{ $title }}
         </div>
         <div class="col-md-12 time_view">
             Размещено {{ $object->created_at }}
         </div>
+    </div>
+    <div class="col-md-3">
+        <span class="price_view">{{ $price }} р.</span>
     </div>
     {!! $gallery !!}
     <div class="col-md-12 block_content">

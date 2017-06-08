@@ -184,6 +184,8 @@ return [
 
         'Lavary\Menu\ServiceProvider',
 
+        'Maatwebsite\Excel\ExcelServiceProvider',
+
     ],
 
     /*
@@ -236,7 +238,7 @@ return [
         'Menu' => 'Lavary\Menu\Facade',
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
-
+        'Excel' => 'Maatwebsite\Excel\Facades\Excel',
     ],
 
 ];

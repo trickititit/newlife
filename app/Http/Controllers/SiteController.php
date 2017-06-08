@@ -113,6 +113,7 @@ class SiteController extends Controller
 
     public function getMenu() {
 
+        return null;
 //        $menu = $this->m_rep->getMenu("left");
 //
 //        $mBuilder = Menu::make('leftNav', function($m) use ($menu) {

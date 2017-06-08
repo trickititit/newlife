@@ -9,7 +9,8 @@ use App\Repositories\ObjectsRepository;
 use App\Repositories\CitiesRepository;
 use App\Repositories\AreasRepository;
 use App\Repositories\ComfortsRepository;
-use App\JavaScript\JavaScriptMaker;
+use App\Components\JavaScriptMaker;
+use App\Components\ExcelExport;
 use Gate;
 use Carbon\Carbon;
 
@@ -19,10 +20,9 @@ class ObjectController extends AdminController
     public $city_rep;
     public $area_rep;
     public $com_rep;
-    public $inputs = array();
 
     public function __construct(ObjectsRepository $o_rep, CitiesRepository $city_rep, AreasRepository $area_rep, ComfortsRepository $com_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()), new \App\User);
 
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);
@@ -272,76 +272,19 @@ class ObjectController extends AdminController
         }
     }
     
-    private function getEditScript($object) {
-        switch ($object->category) {
-            case "1": $text = "
-                    $(\"#obj_type option\").not(\"[value=1]\").attr(\"disabled\", \"disabled\");
-        ";
-                break;
-            case "2": $text = "
-                    $('#obj_form_1').hide();
-                    $('#room').hide();
-                    $('#build_type_1').hide();
-                    $('#floor').hide();
-                    $('#home_floors_1').hide();
-                    $('#square').hide();
-                    $('#obj_form_3').hide();
-                    $('#earth_square').show();
-                    $('#distance').show();
-                    $('#house_square').show();
-                    $('#build_type_2').show();
-                    $('#obj_form_2').show();
-                    $('#home_floors_2').show();
-                    $(\"#obj_type option\").not(\"[value=2]\").attr(\"disabled\", \"disabled\");
-        ";
-                break;
-            case "3": $text = "
-                    $('#obj_form_3').show();
-                    $('#obj_form_1').hide();
-                    $(\"#obj_type option\").not(\"[value=3]\").attr(\"disabled\", \"disabled\");
-        ";
-                break;
-            default: break;
+    public function export(ExcelExport $excel, Request $request) {
+        $this->checkUser();
+        if($request->user != "") {
+            $objects = $this->o_rep->get("*", false, false, array("created_id", $request->user));
+        } else {
+            $objects = $this->o_rep->get();
         }
-        $text .= "
-                    ymaps.ready(function () {
-            var myMap = window.map = new ymaps.Map('YMapsID', {
-                    center: [".$object->geo."],
-                    zoom: 16,
-                    behaviors: ['default']
-
-                        }),
-                    searchControl = new SearchAddress(myMap, $('form'));
-                            myMap.controls.add(
-                new ymaps.control.ZoomControl()
-        );
-        myMap.controls.add('typeSelector'),
-                     _point = new ymaps.Placemark([".$object->geo."], {
-                balloonContentBody: \"".$object->address."\"
-                
-                    });
-                    myMap.geoObjects.add(_point);});
-                    var myChoise = $('#obj_city select').val();
-                    $('#obj_city select option').each(function () {
-                            var myChoise2 = $(this).val();
-                            if (myChoise2 == myChoise) {
-                                $('#obj_area'+myChoise).show();
-                            } else {
-                                $('#obj_area'+myChoise2).hide();
-                            }
-                        });
-                    ";
-
-        return $text;
-    }
-
-    private function getEditComforts($object) {
-        $comforts_id = array();
-        if(!$object->comforts->isEmpty()) {
-            foreach ($object->comforts as $comfort) {
-                $comforts_id[] = $comfort->title;
-            }
+        $excel->Export($objects, $this->user->login);
+        $path = storage_path().'/app/public/'.env('THEME','default').'/xlsx/'.$this->user->login.'.xlsx';
+        if (file_exists($path)) {
+            return response()->download($path);
         }
-        return implode("','", $comforts_id);
     }
+    
+    
 }

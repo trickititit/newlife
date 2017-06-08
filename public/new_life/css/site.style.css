@@ -217,6 +217,13 @@ body {
   margin-top: 15px;
   padding: 0 35px; }
 
+.price_view {
+  float: right;
+  font-family: "AcrobatReg", sans-serif;
+  font-size: 28px;
+  margin-top: 15px;
+  padding: 0 35px; }
+
 .time_view {
   font-family: "AcrobatReg", sans-serif;
   float: left;

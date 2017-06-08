@@ -30,6 +30,10 @@ class User extends Authenticatable
     public function role() {
         return $this->belongsTo('App\Role');
     }
+
+    public function scopeRieltors($query) {
+        return $query->where("role_id", "!=", "3");
+    }
     
     public function completedObjects() {
         return $this->hasMany('App\Object', "completed_id");

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Repositories\ObjectsRepository;
 use App\Repositories\CitiesRepository;
 use App\Repositories\AreasRepository;
 use Illuminate\Support\Facades\Session;
-use App\JavaScript\JavaScriptMaker;
+use App\Components\JavaScriptMaker;
+use Excel;
 use Menu;
 use Gate;
 use URL;
@@ -18,10 +20,9 @@ class IndexController extends AdminController {
     protected $o_rep;
     protected $city_rep;
     protected $area_rep;
-    protected $inputs = array();
 
     public function __construct(ObjectsRepository $o_rep, CitiesRepository $city_rep, AreasRepository $area_rep) {
-        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()));
+        parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()), new \App\User);
 
 //        if(Gate::denies('VIEW_ADMIN')) {
 //            abort(403);
@@ -36,7 +37,7 @@ class IndexController extends AdminController {
         $this->area_rep = $area_rep;
         // INIT INPUTS
         $this->inputs = array_add($this->inputs, "obj_category", array("1" => "Квартира", "2" => "Дом, Дача, Таунхаус", "3" => "Комната"));
-        $this->inputs = array_add($this->inputs, "obj_deal", array("Продажа" => "Продажа", "Обмен" => "Обмен"));
+        $this->inputs = array_add($this->inputs, "obj_deal", array("" => "Тип сделки","Продажа" => "Продажа", "Обмен" => "Обмен"));
         $this->inputs = array_add($this->inputs, "obj_form_1", array("Вторичка" => "Вторичка", "Новостройка" => "Новостройка"));
         $this->inputs = array_add($this->inputs, "obj_form_2", array("Дом" => "Дом", "Дача" => "Дача", "Коттедж" => "Коттедж", "Таунхаус" => "Таунхаус"));
         $this->inputs = array_add($this->inputs, "obj_form_3", array("" => "Тип объекта","Гостиничного" => "Гостиничного", "Коридорного" => "Коридорного", "Секционного" => "Секционного", "Коммунальная" => "Коммунальная"));

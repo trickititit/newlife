@@ -32,7 +32,7 @@
         <label for="telefon">Телефон</label>
     {!! Form::text('telefon', isset($user->telefon)? $user->telefon : old("telefon"), ['id'=>'telefon', "class" => "form-control", "required" => ""]) !!}
     </div>
-        {{--// ПЕРЕДЕЛАТЬ!!--}}
+     {{--@FIXME: Переделать!!!    --}}
     @if(isset($user))
         @if ($user->role->name == "admin")
             <div class="form-group">
@@ -46,6 +46,10 @@
             {!! Form::select('role', $inputs["roles"], isset($user->role) ? $user->role->id  : old('role'), ["class" => "form-control", "id" => "role"]) !!}
         </div>
     @endif
+        <div class="form-group">
+            <label for="role">Аватар</label>
+                {!! Form::file('image', ['class' => 'filestyle','data-buttonText'=>'Выберите изображение','data-buttonName'=>"btn-primary",'data-placeholder'=>"Файла нет"]) !!}
+        </div>
     @if(isset($user))
         <input type="hidden" name="_method" value="PUT">
     @endif

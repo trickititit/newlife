@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Repositories\AdmMenusRepository;
 use App\Http\Controllers\Controller;
@@ -20,6 +21,10 @@ class AdminController extends Controller
     protected $a_rep;
 
     protected $user;
+
+    protected $rieltors;
+
+    protected $inputs = array();
 
     protected $settings = array();
 
@@ -41,7 +46,7 @@ class AdminController extends Controller
 
     protected $vars;
 
-    public function __construct(AdmMenusRepository $m_rep, SettingsRepository $settings) {
+    public function __construct(AdmMenusRepository $m_rep, SettingsRepository $settings, User $user) {
         $this->pub_path = asset(config('settings.theme'));
         $this->inc_css_lib = array(
             'font-awesome' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/font-awesome/font-awesome.min.css">'),
@@ -58,6 +63,12 @@ class AdminController extends Controller
             'notify' => array('url' => '<script src="'.$this->pub_path.'/js/lib/bootstrap-notify/bootstrap-notify.min.js"></script>'),
         );
         $this->m_rep = $m_rep;
+        $this->rieltors = $user->Rieltors()->get();
+        $rieltors_inputs = array("" => "Все объекты");
+        foreach ($this->rieltors as $rieltor) {
+            $rieltors_inputs = array_add($rieltors_inputs, $rieltor->id, $rieltor->name);
+        }
+        $this->inputs = array_add($this->inputs, "rieltors", $rieltors_inputs);
         $settings_col = $settings->get(["name", "param"]);
         foreach ($settings_col as $setting_col) {
             $this->settings[$setting_col->name] = $setting_col->param;
@@ -77,7 +88,7 @@ class AdminController extends Controller
 
         $menu = $this->getMenu();
 
-        $navigation = view(config('settings.theme').'.admin.navigation')->with('menu',$menu)->render();
+        $navigation = view(config('settings.theme').'.admin.navigation')->with(array('menu' => $menu, 'inputs' => $this->inputs))->render();
         $this->vars = array_add($this->vars,'navigation',$navigation);
         $this->vars = array_add($this->vars, 'user', $this->user);
 //
@@ -120,7 +131,12 @@ class AdminController extends Controller
                 }
                 else {
                     if($m->find($item->parent)) {
-                        $m->find($item->parent)->add($item->title,route($item->path))->id($item->id);
+                        if($item->alias == "otchet") {
+                            $m->find($item->parent)->add($item->title,route($item->path))->id($item->id)->data('data_b', 'data-toggle=modal data-target=.modal-export');
+                        } else {
+                            $m->find($item->parent)->add($item->title,route($item->path))->id($item->id);
+                        }
+
                     }
                 }
             }
