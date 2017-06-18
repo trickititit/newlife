@@ -1,4 +1,4 @@
-<div class="row">
+
     <div class="col-md-9">
         <div id="da-slider" class="da-slider">
             <div class="da-slide">
@@ -33,14 +33,76 @@
     </div>
     <div class="col-md-3">
         <div class="block_widget faq">
-            <div class="row">
                 <div class="col-md-12">
                     <div class="block_obj_comfort_title">Часто задаваемые вопросы</div>
                     <div class="block_faq">
                         %faq%
                     </div>
                 </div>
+
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="grid">
+            <a href="/?view=post&id=2">
+                <div class="col-md-3">
+                    <figure class="effect-steve">
+                        <img class="img-responsive" src="{{ asset(config('settings.theme')) }}/uploads/images/main/2.jpg" alt="img">
+                        <figcaption>
+                            <h2>статейка фывафыва выфаыфв</h2>
+                            <p>не ебал что писатьsdafasdf</p>
+                        </figcaption>
+                    </figure>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="title_offer">Наши партнеры:</div>
+    </div>
+    <div class="col-md-12">
+        <div class="group_main">
+            <div class="col-md-2">
+                <a href="http://www.sberbank.ru/ru/person" target="_blank">
+                    <div class="img_bank"><img src="{{ asset(config('settings.theme')) }}/img/sber.jpg" class="img-responsive img-rounded"></div>
+                    <span class="text_bank">Сбербанк</span>
+                    <span class="desc_bank">Крупнейший и старейший российский универсальный коммерческий банк, контролируется Центральным банком Российской Федерации, которому принадлежит более 52% акций.</span>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="http://www.vtb.ru/" target="_blank">
+                    <div class="img_bank"><img src="{{ asset(config('settings.theme')) }}/img/vtb.jpg" class="img-responsive img-rounded"></div>
+                    <span class="text_bank">ВТБ 24</span>
+                    <span class="desc_bank">Российский коммерческий банк c государственным участием. Второй по величине активов банк страны и первый по размеру уставного капитала.</span>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="https://alfabank.ru/" target="_blank">
+                    <div class="img_bank"><img src="{{ asset(config('settings.theme')) }}/img/alfa.jpg" class="img-responsive img-rounded"></div>
+                    <span class="text_bank">Альфа Банк</span>
+                    <span class="desc_bank">Крупнейший российский частный коммерческий банк. По данным рейтингов РБК и Forbes на конец 2010 года — седьмой в России банк по объёму активов.</span>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="" target="_blank">
+                    <div class="img_bank"><img src="{{ asset(config('settings.theme')) }}/img/home.jpg" class="img-responsive img-rounded"></div>
+                    <span class="text_bank">Homecredit</span>
+                    <span class="desc_bank">Один из крупнейших розничных финансовых институтов на российском рынке, «дочка» чешской Home Credit Group* бизнесмена Петра Келлнера (входит в состав международной PPF Group).</span>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="" target="_blank">
+                    <div class="img_bank"><img src="{{ asset(config('settings.theme')) }}/img/promsvyz.jpg" class="img-responsive img-rounded"></div>
+                    <span class="text_bank">Промсвязьбанк</span>
+                    <span class="desc_bank">Российский частный банк. Полное наименование — Публичное акционерное общество «Промсвязьбанк».</span>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="" target="_blank">
+                    <div class="img_bank"><img src="{{ asset(config('settings.theme')) }}/img/ranf.jpg" class="img-responsive img-rounded"></div>
+                    <span class="text_bank">Raiffeisen</span>
+                    <span class="desc_bank">Одна из крупнейших австрийских банковских групп, кооперативный банк. Штаб-квартира находится в Вене.</span>
+                </a>
             </div>
         </div>
     </div>
-</div>

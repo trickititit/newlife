@@ -1,22 +1,27 @@
 @if($objects->isNotEmpty())
-    @if ($objects->count() > 4)
+    @if ($objects->count() > 3)
         <div class="col-md-12">
             <div class="sepor"></div>
         </div>
         <div class="col-md-12">
             <div class="title_offer">Специальное предложение:</div>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 offer_margin">
             <div class="slider4">
                 @foreach($objects as $object)
                     <div class="slide">
                         <a href='{{route('site.object',['object'=>$object->alias])}}' class="spec_offer">
-                            <div class="img_offer">
-                                @if($object->category == 2)
-                                    <i class="fa fa-home  fa-5x"></i>
-                                @else
-                                    <i class="fa fa-building  fa-5x"></i>
-                                @endif
+                            @if($object->images->isNotEmpty())
+                                @foreach($object->images as $image)
+                                    <div class="img_offer" style="background: url({{ asset(config('settings.theme')) }}/uploads/images/{{$image->object_id}}/{{$image->new_name}} ) no-repeat center center fixed; background-size: cover;">
+                                @break
+                                @endforeach
+                            @else
+                                        <div class="img_offer" style="background: url({{ asset(config('settings.theme')) }}/img/img-task.jpg) no-repeat center center fixed; background-size: cover;">
+                            @endif
+                            <span>{{$object->spec_offer_span_1}}</span>
+                            <span>{{$object->spec_offer_span_2}}</span>
+
                             </div>
                             <span class="text_offer">
                                 @if($object->category == 1)
@@ -27,6 +32,7 @@
                                     Комната в {{$object->rooms}}-к {{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.
                                 @endif
                             </span>
+                            <span class="text_offer">{{ $object->getViewPrice() }} р.</span>
                             <span class="desc_offer">{{ $object->desc }}</span>
                         </a>
                     </div>
@@ -45,13 +51,16 @@
                 @foreach($objects as $object)
                 <div class="slide"><div class="col-md-3">
                     <a href='{{route('site.object',['object'=>$object->alias])}}' class="spec_offer">
-                        <div class="img_offer">
-                            @if($object->category == 2)
-                                <i class="fa fa-home  fa-5x"></i>
-                            @else
-                                <i class="fa fa-building  fa-5x"></i>
-                            @endif
-                        </div>
+                        @if($object->images->isNotEmpty())
+                            @foreach($object->images as $image)
+                                <div class="img_offer" style="background: url({{ asset(config('settings.theme')) }}/uploads/images/{{$image->object_id}}/{{$image->new_name}} ) no-repeat center center fixed; background-size: cover;">
+                                    @break
+                                    @endforeach
+                                    @else
+                                        <div class="img_offer" style="background: url({{ asset(config('settings.theme')) }}/img/img-task.jpg) no-repeat center center fixed; background-size: cover;">
+                                            @endif
+                                            <span>{{$object->spec_offer_span_1}}</span>
+                                            <span>{{$object->spec_offer_span_2}}</span>
                         <span class="text_offer">
                             @if($object->category == 1)
                                 {{$object->rooms}}-к квартира {{$object->square}} м² {{$object->floor}}/{{$object->build_floors}} эт.

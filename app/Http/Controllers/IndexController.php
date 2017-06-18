@@ -25,9 +25,11 @@ class IndexController extends SiteController
 
         $this->inc_css_lib = array_add($this->inc_css_lib,  'jq-ui', array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/jqueryui/jquery-ui.min.css">'));
         $this->inc_css_lib = array_add($this->inc_css_lib,  'da-slider', array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/site.slider.css">'));
+        $this->inc_css_lib = array_add($this->inc_css_lib,  'bx-slider', array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/jquery.bxslider.css">'));
+        $this->inc_css_lib = array_add($this->inc_css_lib,  'hover', array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/hover.css">'));
         $this->inc_css_lib = array_add($this->inc_css_lib,  'modernizr', array('url' => '<script src="'.$this->pub_path.'/js/modernizr.custom.28468.js"></script>'));
+        $this->inc_js_lib = array_add($this->inc_js_lib,    'bx-slider', array('url' => '<script src="'.$this->pub_path.'/js/jquery.bxslider.min.js"></script>'));
         $this->inc_js_lib = array_add($this->inc_js_lib,    'cs-slider', array('url' => '<script src="'.$this->pub_path.'/js/jquery.cslider.js"></script>'));
-        $this->inc_js_lib = array_add($this->inc_js_lib,    'yandex-map', array('url' => '<script src="//api-maps.yandex.ru/2.0/?lang=ru-RU&load=package.full"></script>'));
         $this->template = config('settings.theme').'.index';
         $this->o_rep = $o_rep;
         $this->city_rep = $city_rep;
@@ -35,9 +37,9 @@ class IndexController extends SiteController
     }
 
     public function index(JavaScriptMaker $jsmaker) {
-        $this->title = "TITLE";
+        $this->title = "Агенство недвижимости Новая Жизнь";
         $this->content = view(config('settings.theme').'.front');
-        $jsmaker->setJs("front");
+        $jsmaker->setJs("front", "", ($this->spec_offer_count > 4)? false : true, "", $this->randStr);
         return $this->renderOutput();
     }
 }

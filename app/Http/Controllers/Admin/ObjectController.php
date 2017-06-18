@@ -83,7 +83,7 @@ class ObjectController extends AdminController
         }
         $this->inputs = array_add($this->inputs, "obj_city", $obj_city);
         $comforts = $this->com_rep->get();
-        $jsmaker->setJs("obj-create", "", true, csrf_token());
+        $jsmaker->setJs("obj-create", "", true, csrf_token(), $this->randStr);
         $rand_obj_id = rand(1,1000);
         $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array('cities' => $cities, "obj_id" => $rand_obj_id, "comforts" => $comforts, "inputs" => $this->inputs))->render();
         $this->title = 'Создание нового объекта';
@@ -139,7 +139,7 @@ class ObjectController extends AdminController
         }
         $this->inputs = array_add($this->inputs, "obj_city", $obj_city);
         $comforts = $this->com_rep->get();
-        $jsmaker->setJs("obj-edit", $object, true, csrf_token());
+        $jsmaker->setJs("obj-edit", $object, true, csrf_token(), $this->randStr);
         $object->client = json_decode($object->client);
         $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array("object" => $object,'cities' => $cities, "obj_id" => $object->id, "comforts" => $comforts, "inputs" => $this->inputs))->render();
         $this->title = 'Редактирование объекта';

@@ -65,6 +65,7 @@ class IndexController extends AdminController {
             $actions = array_add($actions,"object".$object->id, $this->getActions($object, $this->user, $type));
             $object->client = json_decode($object->client);
         }
+        // FIXME: СОРТИРОВАКА ПРИ ПОИСКЕ
         if ($request->route("type") == null) {
             $link = URL::current()."/default/";
         } else {
@@ -73,11 +74,11 @@ class IndexController extends AdminController {
         $order_select = array($link."created_at" => "По дате", $link."price" => "Дешевле", $link."pricedesc" => "Дороже");
         $menus = $this->getObjectsMenu();
         if ($request->has("search")) {
-            $jsmaker->setJs("filter", $request, false);
+            $jsmaker->setJs("filter", $request, false, "", $this->randStr);
             $filter_data = $this->getFilterData($request->except("search"));
             Session::flash('search_status', count($objects));
         } else {
-            $jsmaker->setJs("filter");
+            $jsmaker->setJs("filter", "", true, "", $this->randStr);
             $filter_data = $request->except("search");
         }
         $filter = view(config('settings.theme').'.admin.filter')->with(array("inputs" => $this->inputs, "cities" => $cities, "data" => $filter_data));

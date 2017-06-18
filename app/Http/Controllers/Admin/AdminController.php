@@ -43,6 +43,8 @@ class AdminController extends Controller
     protected $content = FALSE;
 
     protected $title;
+    
+    protected $randStr;
 
     protected $vars;
 
@@ -73,6 +75,7 @@ class AdminController extends Controller
         foreach ($settings_col as $setting_col) {
             $this->settings[$setting_col->name] = $setting_col->param;
         }
+        $this->randStr = $this->generateRandStr();
     }
     
     public function checkUser() {
@@ -84,10 +87,9 @@ class AdminController extends Controller
 
     public function renderOutput() {
         $this->checkUser();
+        $this->vars = array_add($this->vars,'str',$this->randStr);
         $this->vars = array_add($this->vars,'title',$this->title);
-
         $menu = $this->getMenu();
-
         $navigation = view(config('settings.theme').'.admin.navigation')->with(array('menu' => $menu, 'inputs' => $this->inputs))->render();
         $this->vars = array_add($this->vars,'navigation',$navigation);
         $this->vars = array_add($this->vars, 'user', $this->user);
@@ -112,10 +114,16 @@ class AdminController extends Controller
 //        $this->vars = array_add($this->vars,'footer',$footer);
         
         return view($this->template)->with($this->vars);
+    }
 
-
-
-
+    public function generateRandStr($length = 8){
+        $chars = 'abdefhiknrstyzABDEFGHKNQRSTYZ23456789';
+        $numChars = strlen($chars);
+        $string = '';
+        for ($i = 0; $i < $length; $i++) {
+            $string .= substr($chars, rand(1, $numChars) - 1, 1);
+        }
+        return $string;
     }
 
     public function getMenu() {

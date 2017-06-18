@@ -25,6 +25,8 @@ class SiteController extends Controller
 
     protected $user;
 
+    protected $inputs = array();
+
     protected $settings = array();
 
     protected $pub_path;
@@ -44,6 +46,8 @@ class SiteController extends Controller
     protected $title;
 
     protected $vars;
+    
+    protected $randStr;
 
     public function __construct(AdmMenusRepository $m_rep, SettingsRepository $settings, Object $object) {
         $this->pub_path = asset(config('settings.theme'));
@@ -53,6 +57,7 @@ class SiteController extends Controller
             'font-awesome' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/font-awesome/font-awesome.min.css">'),
             'animate' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/animate.css">'),
             'bootstrap' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/bootstrap/bootstrap.min.css">'),
+            'izi' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/iziModal.min.css">'),
             'style' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/site.style.css">'),
         );
         $this->inc_js_lib = array(
@@ -60,6 +65,7 @@ class SiteController extends Controller
             'tether' => array('url' => '<script src="'.$this->pub_path.'/js/lib/tether/tether.min.js"></script>'),
             'bootstrap' => array('url' => '<script src="'.$this->pub_path.'/js/lib/bootstrap/bootstrap.min.js"></script>'),
             'plugins' => array('url' => '<script src="'.$this->pub_path.'/js/plugins.js"></script>'),
+            'izi' => array('url' => '<script src="'.$this->pub_path.'/js/iziModal.min.js"></script>'),            
             'notify' => array('url' => '<script src="'.$this->pub_path.'/js/lib/bootstrap-notify/bootstrap-notify.min.js"></script>'),
         );
         $this->m_rep = $m_rep;
@@ -67,6 +73,7 @@ class SiteController extends Controller
         foreach ($settings_col as $setting_col) {
             $this->settings[$setting_col->name] = $setting_col->param;
         }
+        $this->randStr = $this->generateRandStr();
     }
 
     public function checkUser() {
@@ -77,6 +84,7 @@ class SiteController extends Controller
     }
 
     public function renderOutput() {
+        $this->vars = array_add($this->vars,'str',$this->randStr);
         $this->vars = array_add($this->vars,'title',$this->title);
         $menu = $this->getMenu();
         $navigation = view(config('settings.theme').'.admin.navigation')->with('menu',$menu)->render();
@@ -109,6 +117,16 @@ class SiteController extends Controller
 
 
 
+    }
+
+    public function generateRandStr($length = 8){
+        $chars = 'abdefhiknrstyzABDEFGHKNQRSTYZ23456789';
+        $numChars = strlen($chars);
+        $string = '';
+        for ($i = 0; $i < $length; $i++) {
+            $string .= substr($chars, rand(1, $numChars) - 1, 1);
+        }
+        return $string;
     }
 
     public function getMenu() {

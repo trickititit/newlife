@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <span class="price_view">{{ $price }} р.</span>
+        <span class="price_view">{{ $object->getViewPrice() }} р.</span>
     </div>
     {!! $gallery !!}
     <div class="col-md-12 block_content">

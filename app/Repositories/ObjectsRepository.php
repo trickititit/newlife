@@ -46,6 +46,8 @@ class ObjectsRepository extends Repository {
                 $this->model->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                 $this->model->geo = $request->obj_geo;
                 $this->model->created_id = $user->id;
+                $this->model->spec_offer_span_1 = (isset($request->spec_offer_span_1)? $request->spec_offer_span_1 : null);
+                $this->model->spec_offer_span_2 = (isset($request->spec_offer_span_2)? $request->spec_offer_span_2 : null);
                 $this->model->spec_offer = (isset($request->spec_offer)? 1 : null);
                 $client = new \stdClass;
                 $client->name = $request->client_name;
@@ -88,6 +90,8 @@ class ObjectsRepository extends Repository {
                     $this->model->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $this->model->geo = $request->obj_geo;
                     $this->model->created_id = $user->id;
+                    $this->model->spec_offer_span_1 = (isset($request->spec_offer_span_1)? $request->spec_offer_span_1 : null);
+                    $this->model->spec_offer_span_2 = (isset($request->spec_offer_span_2)? $request->spec_offer_span_2 : null);
                     $this->model->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
@@ -130,6 +134,8 @@ class ObjectsRepository extends Repository {
                     $this->model->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $this->model->geo = $request->obj_geo;
                     $this->model->created_id = $user->id;
+                    $this->model->spec_offer_span_1 = (isset($request->spec_offer_span_1)? $request->spec_offer_span_1 : null);
+                    $this->model->spec_offer_span_2 = (isset($request->spec_offer_span_2)? $request->spec_offer_span_2 : null);
                     $this->model->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
@@ -184,6 +190,8 @@ class ObjectsRepository extends Repository {
                     $object->price =  preg_replace("/[^0-9]/", '',$request->obj_price);
                     $object->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $object->geo = $request->obj_geo;
+                    $object->spec_offer_span_1 = (isset($request->spec_offer_span_1)? $request->spec_offer_span_1 : null);
+                    $object->spec_offer_span_2 = (isset($request->spec_offer_span_2)? $request->spec_offer_span_2 : null);
                     $object->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
@@ -226,6 +234,8 @@ class ObjectsRepository extends Repository {
                     $object->price =  preg_replace("/[^0-9]/", '',$request->obj_price);
                     $object->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $object->geo = $request->obj_geo;
+                    $object->spec_offer_span_1 = (isset($request->spec_offer_span_1)? $request->spec_offer_span_1 : null);
+                    $object->spec_offer_span_2 = (isset($request->spec_offer_span_2)? $request->spec_offer_span_2 : null);
                     $object->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
@@ -268,6 +278,8 @@ class ObjectsRepository extends Repository {
                     $object->price =  preg_replace("/[^0-9]/", '',$request->obj_price);
                     $object->surcharge =  preg_replace("/[^0-9]/", '',$request->obj_doplata);
                     $object->geo = $request->obj_geo;
+                    $object->spec_offer_span_1 = (isset($request->spec_offer_span_1)? $request->spec_offer_span_1 : null);
+                    $object->spec_offer_span_2 = (isset($request->spec_offer_span_2)? $request->spec_offer_span_2 : null);
                     $object->spec_offer = (isset($request->spec_offer)? 1 : null);
                     $client = new \stdClass;
                     $client->name = $request->client_name;
@@ -469,6 +481,7 @@ class ObjectsRepository extends Repository {
                     if ($count) {
                         $result = $this->get("*", false, false, false, true);
                     } else {
+                        // FIXME: НЕ РАБОТАЕТ СОРТИРОВАКА
                         $result = $this->get("*", false, $pagination, false, false, $order);
                     }
                 }

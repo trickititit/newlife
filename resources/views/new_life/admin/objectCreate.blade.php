@@ -56,10 +56,24 @@
                     </div>
                     <div class="col-md-12">
                         <h4 class="m-t-md">Настройки</h4>
-                        <div class="col-md-3">
+                        <div class="col-md-12">
                             <div class="checkbox-bird">
                                 {!! Form::checkbox('spec_offer', "1", (isset($object->spec_offer) ? true : false) , ["id" => "spec_offer"]) !!}
                                 <label for="spec_offer">Специальное предложение</label>
+                            </div>
+                        </div>
+                        <div class="form-group clearfix" id="spec_offer_input" {{ isset($object->spec_offer) ? "" : "style=display:none;"  }}>
+                            <div class="col-md-4">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="client_family">Поле Специального предложения 1</label>
+                                    {!! Form::text('spec_offer_span_1', isset($object->spec_offer_span_1)? $object->spec_offer_span_1 : old("spec_offer_span_1"), ["id" => "spec_offer_span_1" ,"class" => "form-control"]) !!}
+                                </fieldset>
+                            </div>
+                            <div class="col-md-4">
+                                <fieldset class="form-group">
+                                    <label class="form-label semibold" for="client_father_name">Поле Специального предложения 2</label>
+                                    {!! Form::text('spec_offer_span_2', isset($object->spec_offer_span_2)? $object->spec_offer_span_2 : old("spec_offer_span_2"), ["id" => "spec_offer_span_2" ,"class" => "form-control"]) !!}
+                                </fieldset>
                             </div>
                         </div>
                     </div>

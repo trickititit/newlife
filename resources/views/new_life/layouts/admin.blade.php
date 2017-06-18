@@ -123,6 +123,6 @@
 @endif
 <!-- END SCRIPT INCLUDE -->
 <script src="{{ asset(config('settings.theme')) }}/js/app.js"></script>
-<script src="{{ url("js/script") }}"></script>
+<script src="{{ url("js/script-".$str) }}"></script>
 </body>
 </html>

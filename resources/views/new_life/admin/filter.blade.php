@@ -1,4 +1,4 @@
-{{--сделать Popovers--}}
+{{-- // @TODO: сделать Popovers--}}
 <div id="filter">
     {!! Form::open(["url" => URL::current(), 'method' => "GET"]) !!}
         <div class="row bg_top">

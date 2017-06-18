@@ -29,7 +29,8 @@ abstract class Repository {
 		
 		if($count) {
 			return $builder->count();
-		} else {
+		}
+		
 		if ($order) {
 			if (is_array($order)) {
 				$builder->orderBy($order[0], $order[1]);
@@ -37,8 +38,8 @@ abstract class Repository {
 				$builder->orderBy($order);
 			}
 		}
-			return $builder->get();
-		}
+		return $builder->get();
+
 	}
 
 	public function getMaxId() {

@@ -28,6 +28,10 @@ class Object extends Model
         return $this->hasMany('App\Image');
     }
 
+    public function getViewPrice() {
+        return number_format($this->price, 0, '', ' ');
+    }
+
     public function preworkingUser() {
         return $this->belongsTo('App\User', 'pre_working_id');
     }

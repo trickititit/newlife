@@ -1,21 +1,14 @@
 <?php
 
-
-
-
-Route::get('/', function () {
-    return redirect("/login");
-});
+Route::get('/', ['uses' => 'IndexController@index', 'as' => 'site.index']);
 
 Route::get('/object/{object}', ['uses' => 'ObjectController@index', 'as' => 'site.object']);
-
-Route::get('/front', ['uses' => 'IndexController@index', 'as' => 'site.index']);
-
+Route::get('/catalog/{order?}', ['uses' => 'CatalogController@index', 'as' => 'site.catalog']);
 Route::get('/js/{file}', function($file = null)
 {
     $path = storage_path().'/app/public/new_life/js/'.$file.".js";
     if (file_exists($path)) {
-        return Response::download($path);
+        return response()->download($path)->deleteFileAfterSend(true);
     }
 });
 
@@ -47,5 +40,4 @@ Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
     });
     //INDEX
     Route::get('/{type?}/{order?}',['uses' => 'Admin\IndexController@index','as' => 'adminIndex']);
-
 });
