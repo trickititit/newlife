@@ -35,6 +35,10 @@ class RouteServiceProvider extends ServiceProvider
             return \App\Comfort::where('alias',$value)->first();
         });
 
+        Route::bind('post', function ($value) {
+            return \App\Post::where('alias',$value)->first();
+        });
+
         Route::bind('user', function ($value) {
             return \App\User::find($value);
         });

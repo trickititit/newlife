@@ -70,11 +70,11 @@ class CatalogController extends SiteController
         $link = route(Route::current()->getName(), ['order' => ""])."";
         $order_select = array($link."/created_at" => "По дате", $link."/price" => "Дешевле", $link."/pricedesc" => "Дороже");
         if ($request->has("search")) {
-            $jsmaker->setJs("catalog-filter", $request, false, "", $this->randStr, ($this->spec_offer_count > 4)? true : false);
+            $jsmaker->setJs("catalog-filter", $request, false, "", $this->randStr, ($this->spec_offer_count > 3)? true : false);
             $filter_data = $this->getFilterData($request->except("search"));
             Session::flash('search_status', count($objects));
         } else {
-            $jsmaker->setJs("catalog-filter", "", true, "", $this->randStr, ($this->spec_offer_count > 4)? true : false);
+            $jsmaker->setJs("catalog-filter", "", true, "", $this->randStr, ($this->spec_offer_count > 3)? true : false);
             $filter_data = $request->except("search");
         }
         $filter = view(config('settings.theme').'.filter')->with(array("inputs" => $this->inputs, "cities" => $cities, "data" => $filter_data));

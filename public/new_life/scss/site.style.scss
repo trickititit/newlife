@@ -97,18 +97,48 @@ body {
 }
 
 .contacts {
+  @include clearfix;
   margin-top: 20px;
   color: #369F17;
   list-style: none;
 }
 
 .contacts li {
+  float: left;
+  display: inline-block;
   margin-top: 10px;
+}
+
+.contacts li:nth-child(even) {
+  float: right;
+}
+
+.obmen-text {
+  margin-top: 35px;
+  text-align: center;
+  color: #369F17;
+  font-size: 30px;
+}
+
+.send-phone-request {
+  color: #369F17;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.send-phone-request:focus, .send-phone-request:hover {
+  color: #369F17 !important;
+  text-decoration: underline;
 }
 
 .contacts .fa {
   margin-left: 5px;
   margin-right: 5px;
+}
+
+.send-request {
+  margin-top: 15px;
+  width: 100%;
 }
 
 // ===============================================
@@ -159,6 +189,7 @@ body {
   border-radius: 5px;
   margin-top: 50px;
   margin-right: 15px;
+  width: 100%;
 }
 
 .block_content {
@@ -595,6 +626,21 @@ body {
   text-align: center;
 }
 
+.site_a {
+  display: block;
+  font-family:"AcrobatReg", sans-serif;
+  color: #000;
+  font-size: 20px;
+  text-align: left;
+  opacity: 0.5;
+  margin-top: 15px;
+}
+
+.site_a:hover {
+  opacity: 1;
+  text-decoration: none;
+  color: #000;
+}
 
 .group_main {
   margin-top: 20px;
@@ -618,4 +664,37 @@ body {
 
 .group_main a:hover{
   text-decoration: none;
+}
+
+// ===============================
+// POST
+// ===============================
+
+.post-title {
+  font-weight: 600;
+  font-family: "AcrobatReg",sans-serif;
+  position: relative;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.4);
+  font-size: 25px;
+  line-height: 40px;
+  color: #20A64F;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(53,86,129, 0.3);
+}
+
+.post {
+  font-family: "AcrobatReg",sans-serif;
+  text-align:left;
+  word-wrap: break-word;
+  font-size: 18px;
+  padding: 10px;
+}
+
+.post-date {
+  font-family: "AcrobatReg",sans-serif;
+  text-align:left;
+  float: right;
+  word-wrap: break-word;
+  font-size: 18px;
+  padding: 10px;
 }

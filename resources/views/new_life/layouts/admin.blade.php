@@ -43,6 +43,9 @@
         <div class="site-header-content">
             <div class="site-header-content-in">
                 <div class="site-header-shown">
+                    <a class="btn btn-nav btn-rounded btn-inline btn-success-outline" href="{{route("object.create")}}">
+                        Добавить объект
+                    </a>
                     <div class="dropdown user-menu">
                         <button class="dropdown-toggle" id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img src="{{ asset(config('settings.theme')) }}/img/avatar-2-64.png" alt="">

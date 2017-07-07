@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Object;
+use App\Post;
 use App\Repositories\ObjectsRepository;
 use App\Repositories\CitiesRepository;
 use App\Repositories\AreasRepository;
@@ -36,10 +37,12 @@ class IndexController extends SiteController
         $this->area_rep = $area_rep;
     }
 
-    public function index(JavaScriptMaker $jsmaker) {
+    public function index(JavaScriptMaker $jsmaker, Post $post) {
         $this->title = "Агенство недвижимости Новая Жизнь";
-        $this->content = view(config('settings.theme').'.front');
-        $jsmaker->setJs("front", "", ($this->spec_offer_count > 4)? false : true, "", $this->randStr);
+        $posts = $post->OnMain()->get();
+        $faq_posts = $post->FAQ()->get();
+        $this->content = view(config('settings.theme').'.front')->with(['posts' => $posts, 'faq' => $faq_posts]);
+        $jsmaker->setJs("front", "", ($this->spec_offer_count > 3)? false : true, "", $this->randStr);
         return $this->renderOutput();
     }
 }

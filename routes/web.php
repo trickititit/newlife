@@ -4,6 +4,7 @@ Route::get('/', ['uses' => 'IndexController@index', 'as' => 'site.index']);
 
 Route::get('/object/{object}', ['uses' => 'ObjectController@index', 'as' => 'site.object']);
 Route::get('/catalog/{order?}', ['uses' => 'CatalogController@index', 'as' => 'site.catalog']);
+Route::get('/post/{post}', ['uses' => 'PostController@show', 'as' => 'site.post']);
 Route::get('/js/{file}', function($file = null)
 {
     $path = storage_path().'/app/public/new_life/js/'.$file.".js";
@@ -18,6 +19,7 @@ Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
 //
     Route::resource('/object', 'Admin\ObjectController',['except' => ['index']]);
     Route::resource('/user', 'Admin\UserController');
+    Route::resource('/post', 'Admin\PostController');
     Route::resource('/comfort', 'Admin\ComfortController',['only' => ['index', 'store', 'destroy']]);
     Route::group(['prefix' => 'settings'],function() {
        Route::get('/edit', ['uses' => 'Admin\SettingController@edit', "as" => 'settings.edit']);
@@ -35,6 +37,7 @@ Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
     });
     Route::group(['prefix' => 'image'],function() {
         Route::post('/delete',['uses'=>'Admin\Storage@objDeleteImage','as'=>'adminObjDelImg']);
+        Route::post('/post',['uses'=>'Admin\Storage@UploadImage','as'=>'adminUplImg']);
         Route::post('/upload',['uses'=>'Admin\Storage@objUploadImage','as'=>'adminObjUplImg']);
         Route::get('/get',['uses'=>'Admin\Storage@objGetImage','as'=>'adminObjGetImg']);
     });

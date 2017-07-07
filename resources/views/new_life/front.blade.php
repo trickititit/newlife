@@ -36,26 +36,34 @@
                 <div class="col-md-12">
                     <div class="block_obj_comfort_title">Часто задаваемые вопросы</div>
                     <div class="block_faq">
-                        %faq%
+                        @if(isset($faq))
+                            @foreach($faq as $post)
+                                <a class="site_a" href="{{route('site.post',['post'=>$post->alias])}}">{{$post->title}}</a>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
 
         </div>
     </div>
     <div class="col-md-12">
-        <div class="grid">
-            <a href="/?view=post&id=2">
-                <div class="col-md-3">
-                    <figure class="effect-steve">
-                        <img class="img-responsive" src="{{ asset(config('settings.theme')) }}/uploads/images/main/2.jpg" alt="img">
-                        <figcaption>
-                            <h2>статейка фывафыва выфаыфв</h2>
-                            <p>не ебал что писатьsdafasdf</p>
-                        </figcaption>
-                    </figure>
+        @if(isset($posts))
+            @foreach($posts as $post)
+                <div class="grid">
+                    <a href="{{route('site.post',['post'=>$post->alias])}}">
+                        <div class="col-md-3">
+                            <figure class="effect-steve">
+                                <img class="img-responsive" src="{{ asset(config('settings.theme')) }}/uploads/post/{{$post->image}}" alt="img">
+                                <figcaption>
+                                    <h2>{{$post->title}}</h2>
+                                    <p>{{$post->desc}}</p>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </a>
                 </div>
-            </a>
-        </div>
+            @endforeach
+        @endif
     </div>
     <div class="col-md-12">
         <div class="title_offer">Наши партнеры:</div>

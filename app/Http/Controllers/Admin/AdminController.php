@@ -20,6 +20,8 @@ class AdminController extends Controller
 
     protected $a_rep;
 
+    protected $p_rep;
+
     protected $user;
 
     protected $rieltors;

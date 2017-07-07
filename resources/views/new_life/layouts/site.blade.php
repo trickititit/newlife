@@ -24,20 +24,26 @@
 <body class="animated fadeIn">
     <div class="container site-container">
         <header class="site-header">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <div class="logo">
                         <img src="{{ asset(config('settings.theme')) }}/img/logo-new.png">
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <ul class="contacts">
                         <li><i class="fa fa-mobile fa-2x" aria-hidden="true"></i>
                             9-919-792-07-42</li>
                         <li><i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
                             г. Волжский</li>
+                        <li>Профсоюзов 16</li>
+                        <li><div class="send-phone-request send_email">Перезвонить мне</div></li>
                     </ul>
+                    <div class="obmen-text">
+                        Обмен - это просто!
+                    </div>
                 </div>
                 <div class="col-md-3">
+                    <button href="#" type="button" class="btn btn-warning send-request send_email">Отправить заявку</button>
                     <div class="block_hello block_content">
                         <p class="block_title">Личный кабинет</p>
                         @if (Auth::guest())
@@ -141,13 +147,36 @@
         });
     </script>
 @endif
-
+    <div id="modal-send" class="iziModal" data-izimodal-title="Обратная связь">
+        <div class="row form_send">
+            <div class="form-group col-sm-6">
+                <label for="name"class="h4">Имя</label>
+                <input type="text" class="form-control" id="name"  placeholder="Введите имя" required>
+            </div>
+            <div class="form-group col-sm-6">
+                <label for="email" class="h4">Контакты</label>
+                <input type="email" class="form-control" id="email" placeholder="Введите данные для связи с Вами" required>
+            </div>
+        </div>
+        <div class="form-group form_send">
+            <label for="message"class="h4 ">Сообщение</label>
+            <textarea id="message" class="form-control" rows="5" placeholder="Введите свое сообщение" required></textarea>
+        </div>
+        <div class="form_send">
+            <button type="submit" id="form-submit" class="btnbtn-success btn-lg pull-right ">Отправить</button>
+            <div id="msgSubmit" class="h3 text-center hidden">Message Submitted!</div>
+        </div>
+    </div>
 <script>
     $(document).ready(function() {
         $('#modal').iziModal({headerColor: '#228b0c'});
         $("#go_catalog").click(function(){
             $('#modal').iziModal('open');
         });
+            $('#modal-send').iziModal({headerColor: '#228b0c'});
+            $(".send_email").click(function(){
+                $('#modal-send').iziModal('open');
+            });
     });
 </script>
 

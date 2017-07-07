@@ -43,7 +43,7 @@ class ObjectController extends SiteController
         $obj_image= $this->o_rep->getObjImage($object);
         $gallery = view(config('settings.theme').'.gallery')->with(array("images" => $object->images));
         $this->content = view(config('settings.theme').'.object')->with(array("title" => $this->title, "object" => $object, "gallery" => $gallery, "obj_image" => $obj_image));
-        $jsmaker->setJs("obj-view", $object, ($this->spec_offer_count > 4)? false : true, "", $this->randStr);
+        $jsmaker->setJs("obj-view", $object, ($this->spec_offer_count > 3)? false : true, "", $this->randStr);
         return $this->renderOutput();
     }
 }
