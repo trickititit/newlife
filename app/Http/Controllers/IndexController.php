@@ -69,7 +69,7 @@ class IndexController extends SiteController
             dump($object);
             switch ($object->category) {
                 case '1':
-                    # code...
+                    $object->room = $this->findParamOnString($object->title_obj, $object->category, "room");
                     break;
                 case '2':
                     # code...
