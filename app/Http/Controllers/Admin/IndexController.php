@@ -50,7 +50,7 @@ class IndexController extends AdminController {
         $this->inputs = array_add($this->inputs, "obj_home_floors_1", array("1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5", "6" => "6", "7" => "7", "8" => "8", "9" => "9", "10" => "10", "11" => "11", "12" => "12", "13" => "13", "14" => "14", "15" => "15", "16" => "16", "17" => "17", "18" => "18", "19" => "19", "20" => "20"));
     }
 
-    public function index(JavaScriptMaker $jsmaker, Request $request, $type = 'default', $order = "created_at") {
+    public function index(JavaScriptMaker $jsmaker, Request $request, $type = 'default', $order = ["created_at", "desc"]) {
         $this->checkUser();
         $cities = $this->city_rep->get();
         $obj_city = array();

@@ -37,6 +37,8 @@ class ObjectsRepository extends Repository {
                 $this->model->rooms = $request->obj_room;
                 $this->model->floor = $request->obj_floor;
                 $this->model->square = $request->obj_square;
+                $this->model->square_kitchen = $request->obj_square_kitchen;
+                $this->model->square_life = $request->obj_square_life;
                 $this->model->build_type = $request->obj_build_type_1;
                 $this->model->build_floors = $request->obj_home_floors_1;
                 $this->model->desc = $request->obj_desc;
@@ -60,6 +62,7 @@ class ObjectsRepository extends Repository {
                 $client->pasport = $request->client_pasport;
                 $client->pasport_who_take = $request->client_pasport_who_take;
                 $client->pasport_date = $request->client_pasport_date;
+                $client->need = $request->client_need;
                 $this->model->client = json_encode($client, JSON_UNESCAPED_UNICODE);
                     if($this->model->save()) {
                         $this->i_rep->createImgs($temp_obj_id, $this->model->id);
@@ -104,6 +107,7 @@ class ObjectsRepository extends Repository {
                     $client->pasport = $request->client_pasport;
                     $client->pasport_who_take = $request->client_pasport_who_take;
                     $client->pasport_date = $request->client_pasport_date;
+                    $client->need = $request->client_need;
                     $this->model->client = json_encode($client, JSON_UNESCAPED_UNICODE);
                     if($this->model->save()) {
                         $this->i_rep->createImgs($temp_obj_id, $this->model->id);
@@ -125,6 +129,8 @@ class ObjectsRepository extends Repository {
                     $this->model->rooms = $request->obj_room;
                     $this->model->floor = $request->obj_floor;
                     $this->model->square = $request->obj_square;
+                    $this->model->square_kitchen = $request->obj_square_kitchen;
+                    $this->model->square_life = $request->obj_square_life;
                     $this->model->build_type = $request->obj_build_type_1;
                     $this->model->build_floors = $request->obj_home_floors_1;
                     $this->model->desc = $request->obj_desc;
@@ -148,6 +154,7 @@ class ObjectsRepository extends Repository {
                     $client->pasport = $request->client_pasport;
                     $client->pasport_who_take = $request->client_pasport_who_take;
                     $client->pasport_date = $request->client_pasport_date;
+                    $client->need = $request->client_need;
                     $this->model->client = json_encode($client, JSON_UNESCAPED_UNICODE);
                     if($this->model->save()) {
                         $this->i_rep->createImgs($temp_obj_id, $this->model->id);
@@ -182,6 +189,8 @@ class ObjectsRepository extends Repository {
                     $object->rooms = $request->obj_room;
                     $object->floor = $request->obj_floor;
                     $object->square = $request->obj_square;
+                    $object->square_kitchen = $request->obj_square_kitchen;
+                    $object->square_life = $request->obj_square_life;
                     $object->build_type = $request->obj_build_type_1;
                     $object->build_floors = $request->obj_home_floors_1;
                     $object->desc = $request->obj_desc;
@@ -202,6 +211,7 @@ class ObjectsRepository extends Repository {
                     $client->phone = $request->client_phone;
                     $client->mail = $request->client_mail;
                     $client->pasport = $request->client_pasport;
+                    $client->need = $request->client_need;
                     $client->pasport_who_take = $request->client_pasport_who_take;
                     $client->pasport_date = $request->client_pasport_date;
                     $object->client = json_encode($client, JSON_UNESCAPED_UNICODE);
@@ -248,6 +258,7 @@ class ObjectsRepository extends Repository {
                     $client->pasport = $request->client_pasport;
                     $client->pasport_who_take = $request->client_pasport_who_take;
                     $client->pasport_date = $request->client_pasport_date;
+                    $client->need = $request->client_need;
                     $object->client = json_encode($client, JSON_UNESCAPED_UNICODE);
                     if($object->update()) {
                         $comforts = $this->c_rep->getComfortsId($request->comfort);
@@ -270,6 +281,8 @@ class ObjectsRepository extends Repository {
                     $object->rooms = $request->obj_room;
                     $object->floor = $request->obj_floor;
                     $object->square = $request->obj_square;
+                    $object->square_kitchen = $request->obj_square_kitchen;
+                    $object->square_life = $request->obj_square_life;
                     $object->build_type = $request->obj_build_type_1;
                     $object->build_floors = $request->obj_home_floors_1;
                     $object->desc = $request->obj_desc;
@@ -292,6 +305,7 @@ class ObjectsRepository extends Repository {
                     $client->pasport = $request->client_pasport;
                     $client->pasport_who_take = $request->client_pasport_who_take;
                     $client->pasport_date = $request->client_pasport_date;
+                    $client->need = $request->client_need;
                     $object->client = json_encode($client, JSON_UNESCAPED_UNICODE);
                     if($object->update()) {
                         $comforts = $this->c_rep->getComfortsId($request->comfort);
@@ -328,7 +342,7 @@ class ObjectsRepository extends Repository {
         }
     }
 
-    public function getScope($scope, $request = false, $count = false, $order = "created_at", $pagination = 50) {
+    public function getScope($scope, $request = false, $count = false, $order = ["created_at", "desc"], $pagination = 50) {
         if ($order == "pricedesc") {
             $order = array("price", "desc");
         } 

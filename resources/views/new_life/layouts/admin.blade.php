@@ -43,9 +43,12 @@
         <div class="site-header-content">
             <div class="site-header-content-in">
                 <div class="site-header-shown">
-                    <a class="btn btn-nav btn-rounded btn-inline btn-success-outline" href="{{route("object.create")}}">
-                        Добавить объект
+                    <a class="btn btn-nav btn-rounded btn-inline btn-default-outline" href="{{route("site.index")}}">
+                        На сайт
                     </a>
+                    <button type="button" data-toggle="modal" data-target="#addObj" class="btn btn-nav btn-rounded btn-inline btn-success-outline" href="{{route("object.create", ['category' => '4', 'deal' => 'Продажа', 'type' => 'хз'])}}">
+                        Добавить объект
+                    </button>
                     <div class="dropdown user-menu">
                         <button class="dropdown-toggle" id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img src="{{ asset(config('settings.theme')) }}/img/avatar-2-64.png" alt="">
@@ -65,7 +68,57 @@
         </div><!--.site-header-content-->
     </div><!--.container-fluid-->
 </header><!--.site-header-->
-
+<!-- Modal -->
+<div class="modal fade" id="addObj" tabindex="-1" role="dialog" aria-labelledby="addObjLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="addObjLabel">Выберите тип объекта</h5>
+            </div>
+            <div class="modal-body clearfix no_padding">
+                <div class="menu-td col-md-4 no_padding">
+                    <div id="category" class="menu-block">
+                        <div class="elem-nav-cat-title">Категория</div>
+                        <div id="cat-kvart" data-type="1" data-show="cat-kvart-2" class="elem-nav-cat">Квартира</div>
+                        <div id="cat-house" data-type="2" data-show="cat-house-2" class="elem-nav-cat">Дом, дача, участок</div>
+                        <div id="cat-komn" data-type="3" data-show="cat-comnt-2" class="elem-nav-cat">Комната</div>
+                    </div>
+                </div>
+                <div class="menu-td col-md-4 no_padding">
+                    <div id="cat-sdelka" class="menu-block" style="display: none">
+                        <div class="elem-nav-cat-title">Вид сделки</div>
+                        <div data-deal="1" class="elem-nav-cat">Продажа</div>
+                        <div data-deal="2" class="elem-nav-cat">Обмен</div>
+                    </div>
+                </div>
+                <div id="menu-cat-3" class="menu-td col-md-4 no_padding">
+                    <div id="cat-kvart-2" class="menu-block" style="display: none">
+                        <div class="elem-nav-cat-title">Тип объекта</div>
+                        <a href="" id="kvart-2-1"><div class="elem-nav-cat">Вторичка</div></a>
+                        <a href="" id="kvart-2-2"><div class="elem-nav-cat">Новостройка</div></a>
+                    </div>
+                    <div id="cat-house-2" class="menu-block" style="display: none">
+                        <div class="elem-nav-cat-title">Тип объекта</div>
+                        <a href="" id="house-2-1"><div class="elem-nav-cat">Дом</div></a>
+                        <a href="" id="house-2-2"><div class="elem-nav-cat">Дача</div></a>
+                        <a href="" id="house-2-3"><div class="elem-nav-cat">Коттедж</div></a>
+                        <a href="" id="house-2-4"><div class="elem-nav-cat">Таунхаус</div></a>
+                    </div>
+                    <div id="cat-comnt-2" class="menu-block" style="display: none">
+                        <div class="elem-nav-cat-title">Тип объекта</div>
+                        <a href="" id="comnt-2-1"><div id="comnt-2-1" class="elem-nav-cat">Гостиничного</div></a>
+                        <a href="" id="comnt-2-2"><div class="elem-nav-cat">Коридорного</div></a>
+                        <a href="" id="comnt-2-3"><div class="elem-nav-cat">Секционного</div></a>
+                        <a href="" id="comnt-2-4"><div class="elem-nav-cat">Коммунальная</div></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="mobile-menu-left-overlay"></div>
 <!-- START MAIN NAVIGATION -->
 @yield('navigation')
@@ -127,5 +180,53 @@
 <!-- END SCRIPT INCLUDE -->
 <script src="{{ asset(config('settings.theme')) }}/js/app.js"></script>
 <script src="{{ url("js/script-".$str) }}"></script>
+<script>
+    $(document).ready(function () {
+
+        $('#cat-kvart, #cat-house, #cat-komn').click(function(){
+            var show = $('#cat-sdelka').show(0);
+            $('#menu-cat-3 .menu-block').each(function () {
+                var show = $(this).css("display");
+                if (show == "block") {
+                    $(this).hide(0);
+                }
+            });
+        });
+        $('#cat-sdelka .elem-nav-cat').click(function(){
+            var id_target = $('#category .elem-nav-cat-active').attr('data-show');
+            $('#menu-cat-3 .menu-block').each(function () {
+                if ($(this).attr('id') == id_target) {
+                    $(this).show(0);
+                } else {
+                    $(this).hide(0);
+                }
+            });
+            88172        });
+
+        $('.elem-nav-cat').click(function () {
+            $(this).parent().find('.elem-nav-cat-active').removeClass('elem-nav-cat-active');
+            $(this).addClass('elem-nav-cat-active');
+        });
+
+
+        $('#cat-sdelka .elem-nav-cat').click(function () {
+            var type = $('#category .elem-nav-cat-active').attr('data-type');
+            var deal = $(this).text();
+            var site_address = "{{env('APP_URL')}}/";
+            $('#kvart-2-1').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Вторичка");
+            $('#kvart-2-2').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Новостройка");
+            $('#house-2-1').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Дом");
+            $('#house-2-2').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Дача");
+            $('#house-2-3').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Коттедж");
+            $('#house-2-4').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Таунхаус");
+            $('#comnt-2-1').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Гостиничного");
+            $('#comnt-2-2').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Коридорного");
+            $('#comnt-2-3').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Секционного");
+            $('#comnt-2-4').attr("href", site_address + "admin/object/create/" + type + "/" + deal + "/Коммунальная");
+
+        });
+
+    });
+</script>
 </body>
 </html>

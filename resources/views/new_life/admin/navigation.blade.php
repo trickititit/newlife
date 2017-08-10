@@ -4,11 +4,6 @@
 			@include(config('settings.theme').'.admin.menuitems',['items'=>$menu->roots()])
 		</ul>
 	</nav><!--.side-menu-->
-	<button type="button"
-			class="btn btn-inline btn-primary"
-			data-toggle="modal"
-			data-target=".bd-example-modal-sm">Small modal</button>
-
 	<div class="modal fade modal-export"
 		 tabindex="-1"
 		 role="dialog"

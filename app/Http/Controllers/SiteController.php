@@ -58,6 +58,8 @@ class SiteController extends Controller
             'animate' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/animate.css">'),
             'bootstrap' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/bootstrap/bootstrap.min.css">'),
             'izi' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/iziModal.min.css">'),
+            'form' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/forms.css">'),
+            'form-green' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/theme-green.css">'),
             'style' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/site.style.css">'),
         );
         $this->inc_js_lib = array(

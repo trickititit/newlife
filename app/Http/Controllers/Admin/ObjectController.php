@@ -54,9 +54,12 @@ class ObjectController extends AdminController
         $this->inputs = array_add($this->inputs, "obj_home_floors_2", array("1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5+"));
         $this->inputs = array_add($this->inputs, "obj_build_type_1", array("Кирпичный" => "Кирпичный", "Панельный" => "Панельный", "Блочный" => "Блочный", "Монолитный" => "Монолитный", "Деревянный" => "Деревянный"));
         $this->inputs = array_add($this->inputs, "obj_build_type_2", array("Кирпич" => "Кирпич", "Брус" => "Брус", "Бревно" => "Бревно", "Металл" => "Металл", "Пеноблоки" => "Пеноблоки", "Сендвич-панели" => "Сендвич-панели", "Ж/б панели" => "Ж/б панели", "Экспериментальные материалы" => "Экспериментальные материалы"));
-        $this->inputs = array_add($this->inputs, "obj_floor", array("1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5", "6" => "6", "7" => "7", "8" => "8", "9" => "9", "10" => "10", "11" => "11", "12" => "12", "13" => "13", "14" => "14", "15" => "15", "16" => "16", "17" => "17", "18" => "18", "19" => "19", "20" => "20"));
+        $this->inputs = array_add($this->inputs, "obj_floor", array("1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5", "6" => "6", "7" => "7", "8" => "8", "9" => "9", "10" => "10", "11" => "11", "12" => "12", "13" => "13", "14" => "14", "15" => "15", "16" => "16", "17" => "16+"));
         $this->inputs = array_add($this->inputs, "obj_distance", array("0" => "В черте города", "10" => "10 км", "20" => "20 км", "30" => "30 км", "50" => "50 км", "70" => "70+ км"));
-        $this->inputs = array_add($this->inputs, "obj_home_floors_1", array("1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5", "6" => "6", "7" => "7", "8" => "8", "9" => "9", "10" => "10", "11" => "11", "12" => "12", "13" => "13", "14" => "14", "15" => "15", "16" => "16", "17" => "17", "18" => "18", "19" => "19", "20" => "20"));
+        $this->inputs = array_add($this->inputs, "obj_home_floors_1", array("1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5", "6" => "6", "7" => "7", "8" => "8", "9" => "9", "10" => "10", "11" => "11", "12" => "12", "13" => "13", "14" => "14", "15" => "15", "16" => "16", "17" => "16+"));
+        $this->inputs = array_add($this->inputs, "obj_general_square", array("30" => "30", "32" => "32", "36" => "36", "44" => "44", "60" => "60", "66" => "66", "72" => "72", "84" => "84"));
+        $this->inputs = array_add($this->inputs, "obj_square_kitchen", array("6" => "6", "7" => "7", "8" => "8", "9" => "9", "10" => "10", "12" => "12", "14" => "14", "16" => "16"));
+        $this->inputs = array_add($this->inputs, "obj_square_life", array("15" => "15", "16" => "16", "18" => "18", "19" => "19", "20" => "20", "22" => "22", "30" => "30", "40" => "40"));
     }
 
     public function index() {
@@ -68,9 +71,10 @@ class ObjectController extends AdminController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(JavaScriptMaker $jsmaker)
+    public function create(JavaScriptMaker $jsmaker, $category, $deal, $type)
     {
         $this->checkUser();
+        $obj_param = view(config('settings.theme').'.admin.objectParam')->with(array('category' => $category, 'deal' => $deal, 'type' => $type));
         $cities = $this->city_rep->get();
         $obj_city = array();
         foreach ($cities as $city) {
@@ -85,7 +89,7 @@ class ObjectController extends AdminController
         $comforts = $this->com_rep->get();
         $jsmaker->setJs("obj-create", "", true, csrf_token(), $this->randStr);
         $rand_obj_id = rand(1,1000);
-        $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array('cities' => $cities, "obj_id" => $rand_obj_id, "comforts" => $comforts, "inputs" => $this->inputs))->render();
+        $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array('cities' => $cities, "obj_id" => $rand_obj_id, "comforts" => $comforts, "inputs" => $this->inputs, 'obj_param' => $obj_param, 'category' => $category, 'deal' => $deal, 'type' => $type))->render();
         $this->title = 'Создание нового объекта';
         return $this->renderOutput();
     }
@@ -127,6 +131,7 @@ class ObjectController extends AdminController
     public function edit(JavaScriptMaker $jsmaker, Object $object)
     {
         $this->checkUser();
+        $obj_param = view(config('settings.theme').'.admin.objectParam')->with(array('category' => $object->category, 'deal' => $object->deal, 'type' => $object->type));
         $cities = $this->city_rep->get();
         $obj_city = array();
         foreach ($cities as $city) {
@@ -141,7 +146,7 @@ class ObjectController extends AdminController
         $comforts = $this->com_rep->get();
         $jsmaker->setJs("obj-edit", $object, true, csrf_token(), $this->randStr);
         $object->client = json_decode($object->client);
-        $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array("object" => $object,'cities' => $cities, "obj_id" => $object->id, "comforts" => $comforts, "inputs" => $this->inputs))->render();
+        $this->content = view(config('settings.theme').'.admin.objectCreate')->with(array("object" => $object,'cities' => $cities, "obj_id" => $object->id, "comforts" => $comforts, "inputs" => $this->inputs, 'obj_param' => $obj_param, 'category' => '', 'deal' => '', 'type' => ''))->render();
         $this->title = 'Редактирование объекта';
         return $this->renderOutput();
     }

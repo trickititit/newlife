@@ -246,15 +246,21 @@ body {
   position:relative;
   display:inline-block;
   float: left;
-  width:20%;
+  width:auto;
   z-index: 10000;
   height:auto;
   vertical-align:top;
   text-align:left;
   border-right:  1px solid green;
 }
+
+#menu .pre-last {
+  width: 16%;
+}
 #menu > ul > li:last-child {
+  float: right;
   border-right: none;
+  width: 15%;
 }
 #menu > ul > li{position:static;}
 
@@ -312,13 +318,13 @@ body {
 }
 
 .elem-nav-cat {
-  width: 100%;
-  color: #424242;
-  font-size: 15px;
-  padding-left: 10px;
-  padding-right: 10px;
-  cursor: pointer;
-}
+   width: 100%;
+   color: #424242;
+   font-size: 15px;
+   padding-left: 10px;
+   padding-right: 10px;
+   cursor: pointer;
+ }
 
 .elem-nav-cat:hover {
   background-color: #DCFFD3;

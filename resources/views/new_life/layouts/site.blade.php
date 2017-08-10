@@ -36,14 +36,14 @@
                         <li><i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
                             г. Волжский</li>
                         <li>Профсоюзов 16</li>
-                        <li><div class="send-phone-request send_email">Перезвонить мне</div></li>
+                        <li><div class="send-phone-request send_email" id="send_call">Перезвонить мне</div></li>
                     </ul>
                     <div class="obmen-text">
                         Обмен - это просто!
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <button href="#" type="button" class="btn btn-warning send-request send_email">Отправить заявку</button>
+                    <button href="#" type="button" class="btn btn-warning send-request send_email" id="send_req">Отправить заявку</button>
                     <div class="block_hello block_content">
                         <p class="block_title">Личный кабинет</p>
                         @if (Auth::guest())
@@ -63,10 +63,11 @@
                     <nav id="menu">
                         <ul>
                             <li><a id="go_catalog">Подобрать жилье</a></li>
-                            <li><a href="#">Выбрать банк</a></li>
+                            <li><a href="#">Застройщики</a></li>
                             <li><a href="#">Это интересно</a></li>
-                            <li><a href="#">О нас</a></li>
-                            <li><a href="#">Контакты</a></li>
+                            <li><a href="#">Карьера</a></li>
+                            <li class="pre-last"><a href="#">О нас</a></li>
+                            <li class="last"><a href="#">Контакты</a></li>
                         </ul>
                     </nav><!--menu1-->
                 </div>
@@ -147,24 +148,101 @@
         });
     </script>
 @endif
-    <div id="modal-send" class="iziModal" data-izimodal-title="Обратная связь">
-        <div class="row form_send">
-            <div class="form-group col-sm-6">
-                <label for="name"class="h4">Имя</label>
-                <input type="text" class="form-control" id="name"  placeholder="Введите имя" required>
+    <div id="modal-send" class="iziModal" data-izimodal-title="Оставить заявку">
+        <div class="modern-forms">
+            <div class="modern-container">
+                {!! Form::open(["url" => '', 'method' => "POST", "id" => "form-req"]) !!}
+                    <fieldset>
+                        <div class="form-row">
+                            <div class="col col-6">
+                                <div class="field-group prepend-icon">
+                                    <input name="name" type="text" class="mdn-input" placeholder="Введите ваше имя">
+                                    <label class="mdn-label">Имя</label>
+                                    <span class="mdn-icon"><i class="fa fa-male"></i></span>
+                                    <span class="mdn-bar"></span>
+                                </div>
+                            </div><!-- end col-6 -->
+                            <div class="col col-6">
+                                <div class="field-group prepend-icon">
+                                    <input name="mail" type="email" class="mdn-input" placeholder="Введите Email">
+                                    <label class="mdn-label">Email</label>
+                                    <span class="mdn-icon"><i class="fa fa-envelope"></i></span>
+                                    <span class="mdn-bar"></span>
+                                </div>
+                            </div><!-- end col-6 -->
+                        </div><!-- end form-row -->
+                        <div class="field-group prepend-icon">
+                            <input name="phone" type="text" class="mdn-input" placeholder="Введите номер телефона">
+                            <label class="mdn-label">Телефон</label>
+                            <span class="mdn-icon"><i class="fa fa-phone"></i></span>
+                            <span class="mdn-bar"></span>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <div class="field-group">
+                            <textarea name="message" class="mdn-textarea" placeholder="Введите сообщение"></textarea>
+                            <label class="mdn-label">Ваше сообщение</label>
+                            <span class="mdn-bar"></span>
+                        </div><!-- end mdn-group -->
+                    </fieldset>
+
+                    <div class="mdn-footer">
+                        <button type="submit" class="mdn-button btn-primary">Отправить</button>
+                        <button type="reset" class="mdn-button btn-flat">Сбросить</button>
+                    </div>
+                {!! Form::close() !!}
+            </div><!-- modern-container -->
+        </div><!-- modern-forms -->
+    </div>
+
+    <div id="modal-send-call" class="iziModal" data-izimodal-title="Заказать звонок">
+        <div class="modern-forms">
+            <div class="modern-container">
+                {!! Form::open(["url" => '', 'method' => "POST", "id" => "form-call"]) !!}
+                <fieldset>
+                    <div class="form-row">
+                        <div class="col col-6">
+                            <div class="field-group prepend-icon">
+                                <input name="name" type="text" class="mdn-input" placeholder="Введите ваше имя">
+                                <label class="mdn-label">Имя</label>
+                                <span class="mdn-icon"><i class="fa fa-male"></i></span>
+                                <span class="mdn-bar"></span>
+                            </div>
+                        </div><!-- end col-6 -->
+                        <div class="col col-6">
+                            <div class="field-group prepend-icon">
+                                <input name="mail" type="email" class="mdn-input" placeholder="Введите Email">
+                                <label class="mdn-label">Email</label>
+                                <span class="mdn-icon"><i class="fa fa-envelope"></i></span>
+                                <span class="mdn-bar"></span>
+                            </div>
+                        </div><!-- end col-6 -->
+                    </div><!-- end form-row -->
+                    <div class="field-group prepend-icon">
+                        <input name="phone" type="text" class="mdn-input" placeholder="Введите номер телефона">
+                        <label class="mdn-label">Телефон</label>
+                        <span class="mdn-icon"><i class="fa fa-phone"></i></span>
+                        <span class="mdn-bar"></span>
+                    </div>
+                </fieldset>
+                <div class="mdn-footer">
+                    <button type="submit" class="mdn-button btn-primary">Отправить</button>
+                    <button type="reset" class="mdn-button btn-flat">Сбросить</button>
+                </div>
+                {!! Form::close() !!}
+            </div><!-- modern-container -->
+        </div><!-- modern-forms -->
+    </div>
+
+    <div class="popup2">
+        <div class="close_modal">x</div>
+        <div class="window">
+            <div class="insText">
+                <h5>Запрос отправлен</h5>
+                <p><strong>Ваш запрос отправлен.</strong>Наш менеджер свяжется с вами в ближайшее время!</p>
+                <hr>
             </div>
-            <div class="form-group col-sm-6">
-                <label for="email" class="h4">Контакты</label>
-                <input type="email" class="form-control" id="email" placeholder="Введите данные для связи с Вами" required>
-            </div>
-        </div>
-        <div class="form-group form_send">
-            <label for="message"class="h4 ">Сообщение</label>
-            <textarea id="message" class="form-control" rows="5" placeholder="Введите свое сообщение" required></textarea>
-        </div>
-        <div class="form_send">
-            <button type="submit" id="form-submit" class="btnbtn-success btn-lg pull-right ">Отправить</button>
-            <div id="msgSubmit" class="h3 text-center hidden">Message Submitted!</div>
         </div>
     </div>
 <script>
@@ -174,9 +252,72 @@
             $('#modal').iziModal('open');
         });
             $('#modal-send').iziModal({headerColor: '#228b0c'});
-            $(".send_email").click(function(){
+            $("#send_req").click(function(){
                 $('#modal-send').iziModal('open');
             });
+        $('#modal-send-call').iziModal({headerColor: '#228b0c'});
+        $("#send_call").click(function(){
+            $('#modal-send-call').iziModal('open');
+        });
+
+        //закрытие модального окна
+        $('.close_modal, .overlay').click(function (){
+            $('.popup, .popup2, .overlay').css({'opacity':'0', 'visibility':'hidden'});
+            $('.popup > .fofm textarea').val('');
+            //сброс всех полей формы обраной связи
+            $(':input','.fofm').not(':button, :submit, :reset, :hidden').val('').removeAttr('checked').removeAttr('selected');
+        });
+
+        //аякс форма обратной связи
+        //проверяет какой ответ был получен
+        //и в зависимости от ответа
+        //выводит информацию о статусе
+        //отправки письма
+        $("#form-req").submit(function() {
+            var str = $(this).serialize();
+            $.ajax({
+                type: "POST",
+                url: "/sendmail",
+                data: str,
+                success: function(msg) {
+                    if(msg == 'ok') {
+                        $('.popup2, .overlay').css('opacity','1');
+                        $('.popup2, .overlay').css('visibility','visible');
+                        $('.popup').css({'opacity':'0','visibility':'hidden'});
+                    }
+                    else {
+                        $('.popup2 .window').html('<h5>Ошибка</h5><p>Сообщение не отправлено, убедитесь в правильности заполнение полей</p>');
+                        $('.popup2, .overlay').css('opacity','1');
+                        $('.popup2, .overlay').css('visibility','visible');
+                        $('.popup').css({'opacity':'0','visibility':'hidden'});
+                    }
+                }
+            });
+            return false;
+        });
+
+        $("#form-call").submit(function() {
+            var str = $(this).serialize();
+            $.ajax({
+                type: "POST",
+                url: "/sendmailcall",
+                data: str,
+                success: function(msg) {
+                    if(msg == 'ok') {
+                        $('.popup2, .overlay').css('opacity','1');
+                        $('.popup2, .overlay').css('visibility','visible');
+                        $('.popup').css({'opacity':'0','visibility':'hidden'});
+                    }
+                    else {
+                        $('.popup2 .window').html('<h5>Ошибка</h5><p>Сообщение не отправлено, убедитесь в правильности заполнение полей</p>');
+                        $('.popup2, .overlay').css('opacity','1');
+                        $('.popup2, .overlay').css('visibility','visible');
+                        $('.popup').css({'opacity':'0','visibility':'hidden'});
+                    }
+                }
+            });
+            return false;
+        });
     });
 </script>
 

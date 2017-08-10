@@ -20,8 +20,15 @@ abstract class Repository {
 		if($where) {
 			$builder->where($where[0],$where[1]);
 		}
-		
-		
+
+        if ($order) {
+            if (is_array($order)) {
+                $builder->orderBy($order[0], $order[1]);
+            } else {
+                $builder->orderBy($order);
+            }
+        }
+
 		if($pagination) {
 			// Сдедать настройки
 			return $this->check($builder->paginate($pagination));
@@ -30,14 +37,7 @@ abstract class Repository {
 		if($count) {
 			return $builder->count();
 		}
-		
-		if ($order) {
-			if (is_array($order)) {
-				$builder->orderBy($order[0], $order[1]);
-			} else {
-				$builder->orderBy($order);
-			}
-		}
+
 		return $builder->get();
 
 	}

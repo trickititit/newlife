@@ -191,15 +191,20 @@ body {
   position: relative;
   display: inline-block;
   float: left;
-  width: 20%;
+  width: auto;
   z-index: 10000;
   height: auto;
   vertical-align: top;
   text-align: left;
   border-right: 1px solid green; }
 
+#menu .pre-last {
+  width: 16%; }
+
 #menu > ul > li:last-child {
-  border-right: none; }
+  float: right;
+  border-right: none;
+  width: 15%; }
 
 #menu > ul > li {
   position: static; }

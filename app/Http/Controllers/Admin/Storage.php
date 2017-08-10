@@ -87,6 +87,9 @@ class Storage extends Controller
                 $ROOT = $_SERVER['DOCUMENT_ROOT'];
                 $img = Photo::make($image);
                 $storeFolder = $ROOT . '/uploads/post/';   //2
+                if (!file_exists($storeFolder)) {
+                    mkdir($storeFolder, 0777);
+                }
                 $name = rand(1, 1000).'-'.md5($image->getClientOriginalName());
                 $img->fit(300)->save($storeFolder. $name);
                 $full_path = "/uploads/post/".$name;

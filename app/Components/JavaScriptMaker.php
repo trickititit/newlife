@@ -1813,29 +1813,7 @@ class JavaScriptMaker
                                 $(element).closest('.form-group').removeClass('has-error');
                             }
                         });
-                        form.children(\"div\").steps({
-                            headerTag: \"h3\",
-                            bodyTag: \"section\",
-                            transitionEffect: \"slideLeft\",
-                            onStepChanging: function (event, currentIndex, newIndex)
-                            {
-                                form.validate().settings.ignore = \":disabled,:hidden\";
-                                return form.valid();
-                            },
-                            onFinishing: function (event, currentIndex)
-                            {
-                                form.validate().settings.ignore = \":disabled,:hidden\";
-                                return form.valid();
-                            },                                                    
-                            onFinished: function (event, currentIndex) {
-                                form.submit();
-                            },
-                            labels: {
-                                finish: \"Создать\",
-                                next: \"Далее\",
-                                previous: \"Назад\"
-                            }
-                        });
+
                     });
                     Dropzone.options.myDropzone = {
                             paramName: \"image\",
@@ -1877,54 +1855,7 @@ class JavaScriptMaker
                                     if (  $('#spec_offer').is(\":checked\")  ) active = 'show';
                                     obj[ active ]();
                                 }
-                            );   
-                            $('#obj_type') . change(function () {
-                                var
-                                myChoise = $ ('#obj_type :selected') . val();
-                                if (myChoise == 2) {
-                                    $('#obj_form_1') . hide();
-                                    $('#room') . hide();
-                                    $('#build_type_1') . hide();
-                                    $('#floor') . hide();
-                                    $('#home_floors_1') . hide();
-                                    $('#square') . hide();
-                                    $('#obj_form_3') . hide();
-                                    $('#earth_square') . show();
-                                    $('#distance') . show();
-                                    $('#house_square') . show();
-                                    $('#build_type_2') . show();
-                                    $('#obj_form_2') . show();
-                                    $('#home_floors_2') . show();
-                                } else if (myChoise == 3) {
-                                    $('#obj_form_3') . show();
-                                    $('#obj_form_2') . hide();
-                                    $('#obj_form_1') . hide();
-                                    $('#room') . show();
-                                    $('#build_type_1') . show();
-                                    $('#floor') . show();
-                                    $('#home_floors_1') . show();
-                                    $('#square') . show();
-                                    $('#earth_square') . hide();
-                                    $('#distance') . hide();
-                                    $('#house_square') . hide();
-                                    $('#build_type_2') . hide();
-                                    $('#home_floors_2') . hide();
-                                } else {
-                                    $('#obj_form_1') . show();
-                                    $('#room') . show();
-                                    $('#build_type_1') . show();
-                                    $('#floor') . show();
-                                    $('#home_floors_1') . show();
-                                    $('#square') . show();
-                                    $('#obj_form_3') . hide();
-                                    $('#earth_square') . hide();
-                                    $('#distance') . hide();
-                                    $('#house_square') . hide();
-                                    $('#build_type_2') . hide();
-                                    $('#obj_form_2') . hide();
-                                    $('#home_floors_2') . hide();
-                                }
-                            });
+                            );     
                         
                             $('#obj_city select') . change(function () {
                                 var
@@ -1941,21 +1872,31 @@ class JavaScriptMaker
                             });
                         
                             $('#price input') . keyup(function () {
-                                var
-                                price = $('#price input') . val(),
-                                            square = $('#square input') . val();
-                                        if ($('#obj_type :selected') . val() == '2') {
-                                            square = $('#house_square input') . val();
+                                var price = $('#price input') . val(), square = $('#square_general') . val();
+                                        if ($('#obj_type[name=\"obj_type\"]').val() == '2') {
+                                            square = $('#house_square input[name=\"obj_house_square\"]') . val();
                                         }
                                         if (square . length !== 0) {
-                                            price = price . replace(/[^0 - 9]+/g,'');
-                                            square = square . replace(/[^0 - 9]+/g,'');
+                                            price =  price.replace(/\\./g, '');
+                                            square =  square.replace(/\\./g, '');
                                             pricesquare = Math . round(price / square);
                                             pricesquare = (pricesquare + '');
-                                            pricesquare = pricesquare . replace(/(\\d)(?=(\\d\\d\\d) + ([^\\d]|$))/g, '$1\\.');
+                                            pricesquare = pricesquare . replace(/(\\d)(?=(\\d\\d\\d)+([^\\d]|$))/g, '$1\\.');
                                             $('#price_square input') . attr('value', pricesquare);
                                         }
-                                    });                        
+                                    });
+                           $(\"#square_general_radio label\").click(function() {
+                               var my = $(this).find('input').attr('value');
+                               $('#square_general').val(my);
+                                    });
+                           $(\"#square_kitchen_radio label\").click(function() {
+                               var my = $(this).find('input').attr('value');
+                               $('#square_kitchen').val(my);
+                                    });  
+                           $(\"#square_life_radio label\").click(function() {
+                               var my = $(this).find('input').attr('value');
+                               $('#square_life').val(my);
+                                    });  
                         });
                 ";
                 break;
@@ -2001,29 +1942,6 @@ class JavaScriptMaker
                             },
                             unhighlight: function(element) {
                                 $(element).closest('.form-group').removeClass('has-error');
-                            }
-                        });
-                        form.children(\"div\").steps({
-                            headerTag: \"h3\",
-                            bodyTag: \"section\",
-                            transitionEffect: \"slideLeft\",
-                            onStepChanging: function (event, currentIndex, newIndex)
-                            {
-                                form.validate().settings.ignore = \":disabled,:hidden\";
-                                return form.valid();
-                            },
-                            onFinishing: function (event, currentIndex)
-                            {
-                                form.validate().settings.ignore = \":disabled,:hidden\";
-                                return form.valid();
-                            },                                                    
-                            onFinished: function (event, currentIndex) {
-                                form.submit();
-                            },
-                            labels: {
-                                finish: \"Сохранить\",
-                                next: \"Далее\",
-                                previous: \"Назад\"
                             }
                         });
                     });
@@ -2097,52 +2015,6 @@ class JavaScriptMaker
                                 }
                             );
         " . $this->getEditScript($request) . "
-        $('#obj_type').change(function () {
-            var myChoise = $ ('#obj_type :selected').val();
-            if (myChoise == 2) {
-                $('#obj_form_1').hide();
-                $('#room').hide();
-                $('#build_type_1').hide();
-                $('#floor').hide();
-                $('#home_floors_1').hide();
-                $('#square').hide();
-                $('#obj_form_3').hide();
-                $('#earth_square').show();
-                $('#distance').show();
-                $('#house_square').show();
-                $('#build_type_2').show();
-                $('#obj_form_2').show();
-                $('#home_floors_2').show();
-            } else if (myChoise == 3) {
-                $('#obj_form_3').show();
-                $('#obj_form_2').hide();
-                $('#obj_form_1').hide();
-                $('#room').show();
-                $('#build_type_1').show();
-                $('#floor').show();
-                $('#home_floors_1').show();
-                $('#square').show();
-                $('#earth_square').hide();
-                $('#distance').hide();
-                $('#house_square').hide();
-                $('#build_type_2').hide();
-                $('#home_floors_2').hide();
-            } else {
-                $('#obj_form_1').show();
-                $('#room').show();
-                $('#build_type_1').show();
-                $('#floor').show();
-                $('#home_floors_1').show();
-                $('#square').show();
-                $('#obj_form_3').hide();
-                $('#earth_square').hide();
-                $('#distance').hide();
-                $('#house_square').hide();
-                $('#build_type_2').hide();
-                $('#obj_form_2').hide();
-                $('#home_floors_2').hide();
-            }
-        });
     
         $('#obj_city select').change(function () {
             var myChoise = $(this).val();
@@ -2156,21 +2028,32 @@ class JavaScriptMaker
                 });
             });
     
-                $('#price input').keyup(function(){
-                    var price = $('#price input').val(),
-                        square = $('#square input').val();
-                    if ( $('#obj_type :selected').val() == '2' ) {
-                        square = $('#house_square input').val();
-                    }
-                    if ( square.length !== 0 ) {
-                        price =  price.replace(/[^0-9]+/g,'');
-                        square =  square.replace(/[^0-9]+/g,'');
-                        pricesquare = Math.round(price/square);
-                        pricesquare = (pricesquare + '');
-                        pricesquare = pricesquare.replace(/(\\d)(?=(\\d\\d\\d)+([^\\d]|$))/g, '$1\\.');
-                        $('#price_square input').attr('value', pricesquare);
-                    }
-                });
+                $('#price input') . keyup(function () {
+                                var price = $('#price input') . val(), square = $('#square_general') . val();
+                                        if ($('#obj_type[name=\"obj_type\"]').val() == '2') {
+                                            square = $('#house_square input[name=\"obj_house_square\"]') . val();
+                                        }
+                                        if (square . length !== 0) {
+                                            price =  price.replace(/\\./g, '');
+                                            square =  square.replace(/\\./g, '');
+                                            pricesquare = Math . round(price / square);
+                                            pricesquare = (pricesquare + '');
+                                            pricesquare = pricesquare . replace(/(\\d)(?=(\\d\\d\\d)+([^\\d]|$))/g, '$1\\.');
+                                            $('#price_square input') . attr('value', pricesquare);
+                                        }
+                                    });
+                           $(\"#square_general_radio label\").click(function() {
+                               var my = $(this).find('input').attr('value');
+                               $('#square_general').val(my);
+                                    });
+                           $(\"#square_kitchen_radio label\").click(function() {
+                               var my = $(this).find('input').attr('value');
+                               $('#square_kitchen').val(my);
+                                    });  
+                           $(\"#square_life_radio label\").click(function() {
+                               var my = $(this).find('input').attr('value');
+                               $('#square_life').val(my);
+                                    });  
             });
                 ";
                 break;
@@ -3196,41 +3079,7 @@ class JavaScriptMaker
 
     private function getEditScript($object)
     {
-        switch ($object->category) {
-            case "1":
-                $text = "
-                    $(\"#obj_type option\").not(\"[value=1]\").attr(\"disabled\", \"disabled\");
-        ";
-                break;
-            case "2":
-                $text = "
-                    $('#obj_form_1').hide();
-                    $('#room').hide();
-                    $('#build_type_1').hide();
-                    $('#floor').hide();
-                    $('#home_floors_1').hide();
-                    $('#square').hide();
-                    $('#obj_form_3').hide();
-                    $('#earth_square').show();
-                    $('#distance').show();
-                    $('#house_square').show();
-                    $('#build_type_2').show();
-                    $('#obj_form_2').show();
-                    $('#home_floors_2').show();
-                    $(\"#obj_type option\").not(\"[value=2]\").attr(\"disabled\", \"disabled\");
-        ";
-                break;
-            case "3":
-                $text = "
-                    $('#obj_form_3').show();
-                    $('#obj_form_1').hide();
-                    $(\"#obj_type option\").not(\"[value=3]\").attr(\"disabled\", \"disabled\");
-        ";
-                break;
-            default:
-                break;
-        }
-        $text .= "
+        $text = "
                     ymaps.ready(function () {
             var myMap = window.map = new ymaps.Map('YMapsID', {
                     center: [" . $object->geo . "],
