@@ -21,6 +21,8 @@ class SiteController extends Controller
 
     protected $o_rep;
 
+    protected $aobj_rep;
+
     protected $a_rep;
 
     protected $user;

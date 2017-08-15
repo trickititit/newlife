@@ -177,6 +177,36 @@
         });
     </script>
 @endif
+@if (session('parse_success') || session('parse_error'))
+    <script>
+        $(document).ready(function() {
+            $.notify({
+                icon: 'font-icon font-icon-check-circle',
+                title: '<strong>Результат парсинга:</strong>',
+                message: 'Добавлено {{ session('parse_success') }} объекта.<br>Ошибок при добавлении {{ session('parse_error') }} объектов'
+            }, {
+                type: 'success'
+            });
+        });
+    </script>
+@endif
+@if (session('doparse_error'))
+    <script>
+        $(document).ready(function() {
+            $.notify({
+                icon: 'font-icon font-icon-check-circle',
+                title: '<strong>Ошибки парсинга:</strong>',
+                message: 'Errors: ' + 
+                @foreach(session('doparse_error') as $error)
+                {{$error}}
+                @endforeach
+                ,
+            }, {
+                type: 'error'
+            });
+        });
+    </script>
+@endif
 <!-- END SCRIPT INCLUDE -->
 <script src="{{ asset(config('settings.theme')) }}/js/app.js"></script>
 <script src="{{ url("js/script-".$str) }}"></script>
@@ -226,6 +256,64 @@
 
         });
 
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#objects_parse").submit(function() {
+            var str = $(this).serialize();
+            $.ajax({
+                type: "POST",
+                url: "/parseAvito",
+                data: str,
+                async: true,
+                timeout: 5000000,
+                beforeSend: function () {
+                    var clicked = $(".loader").attr("clicked");
+                    if(clicked == "true") {
+                        var bg = $(".bg");
+                        var loader = $(".loader");
+                        bg.hide();
+                        loader.removeClass("fadeIn");
+                        loader.addClass("fadeOut");
+                        loader.attr("clicked", "false");
+                        loader.hide();
+                    } else {
+                        var bg = $(".bg");
+                        var loader = $(".loader");
+                        bg.show();
+                        loader.show();
+                        loader.removeClass("fadeOut");
+                        loader.addClass("fadeIn");
+                        loader.attr("clicked", "true");
+                    }
+                },
+                success: function(){
+
+                },
+                complete: function(msg) {
+                    var clicked = $(".loader").attr("clicked");
+                    if(clicked == "true") {
+                        var bg = $(".bg");
+                        var loader = $(".loader");
+                        bg.hide();
+                        loader.removeClass("fadeIn");
+                        loader.addClass("fadeOut");
+                        loader.attr("clicked", "false");
+                        loader.hide();
+                    } else {
+                        var bg = $(".bg");
+                        var loader = $(".loader");
+                        bg.show();
+                        loader.show();
+                        loader.removeClass("fadeOut");
+                        loader.addClass("fadeIn");
+                        loader.attr("clicked", "true");
+                    }
+                }
+            });
+            return false;
+        });
     });
 </script>
 </body>

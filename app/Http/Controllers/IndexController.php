@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Object;
 use App\Post;
+use Storage;
 use App\Repositories\ObjectsRepository;
 use App\Repositories\CitiesRepository;
 use App\Repositories\AreasRepository;
+use App\Repositories\AobjectsRepository;
 use Illuminate\Support\Facades\Session;
 use App\Components\JavaScriptMaker;
+use Carbon\Carbon;
 use Menu;
 use Gate;
 use URL;
@@ -17,7 +20,7 @@ use Route;
 
 class IndexController extends SiteController
 {
-    public function __construct(ObjectsRepository $o_rep, CitiesRepository $city_rep, AreasRepository $area_rep) {
+    public function __construct(ObjectsRepository $o_rep, CitiesRepository $city_rep, AreasRepository $area_rep, AobjectsRepository $aobj_rep) {
         parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting), new \App\Object);
 
 //        if(Gate::denies('VIEW_ADMIN')) {
@@ -34,6 +37,7 @@ class IndexController extends SiteController
         $this->template = config('settings.theme').'.index';
         $this->o_rep = $o_rep;
         $this->city_rep = $city_rep;
+        $this->aobj_rep = $aobj_rep;
         $this->area_rep = $area_rep;
     }
 
@@ -46,7 +50,7 @@ class IndexController extends SiteController
         return $this->renderOutput();
     }
 
-    public function avito() {
+    public function parseAvito(Request $request, JavaScriptMaker $jsmaker) {
 //        try {
 //            echo(shell_exec('c:\openServer\domains\newlife\phantomjs\bin\phantomjs.exe c:\openServer\domains\newlife\phantomjs\bin\avito.js'));
 //            flush();
@@ -54,7 +58,10 @@ class IndexController extends SiteController
 //            echo('Ошибка!');
 //            echo $exc->getTraceAsString();
 //        }
-        exec('c:\openServer\domains\newlife\phantomjs\bin\phantomjs c:\openServer\domains\newlife\phantomjs\bin\avito.js', $output);
+//        $jsmaker->setJs("parse-avito", $request->parse_url, true, "", $this->randStr);
+        $cmd = base_path("phantomjs/bin/phantomjs ").base_path("phantomjs/bin/avito.js");
+        exec($cmd, $output);
+        $result = ["success" => 0, "error" => 0,"have" => 0, "object_s" => "", "object_e" => "", "object_h" => ""];
         foreach ($output as $object) {
             $object = json_decode($object);
             $object->category = mb_strtolower($object->category);
@@ -65,125 +72,326 @@ class IndexController extends SiteController
             } elseif ($object->category == "дома, дачи, коттеджи") {
                 $object->category = 2;
             }
-            $object->title_obj = explode(" ", $object->title_obj);
-            dump($object);
+            $object->date = $this->parseDate($object->date);
+//            $object->title_obj = explode(" ", $object->title_obj);
             switch ($object->category) {
                 case '1':
-                    $object->room = $this->findParamOnString($object->title_obj, $object->category, "room");
+                    if ($object->title_obj[1] == "вновостройке") {
+                        $object->type = "Новостройка";
+                        $type = 1;
+                    } else {
+                        $object->type = "Вторичка";
+                        $type = 0;
+                    }
+                    $object->title_obj = $this->checkArray($object->title_obj, $type);
+                    $object->rooms = $this->findParamOnString($object->title_obj, $object->category, "room", $type);
+                    $object->square = $this->findParamOnString($object->title_obj, $object->category, "square", $type);
+                    $object->floor = $this->findParamOnString($object->title_obj, $object->category, "floor", $type);
+                    $object->build_floors = $this->findParamOnString($object->title_obj, $object->category, "build_floors", $type);
+                    $object->deal = $this->findParamOnString($object->title_obj, $object->category, "deal", $type);
+                    $object->price = $this->findParamOnString($object->price, $object->category, "price", $type);
+                    $object->build_type = $this->findParamOnString($object->title_obj, $object->category, "build_type", $type);
+                    $object->id = $this->findParamOnString($object->id, $object->category, "id", $type);
+                    $object->url = "http://avito.ru".$object->url;
+                    $object->area = $this->findParamOnString($object->city, $object->category, "area", $type);
+                    $object->city = $this->findParamOnString($object->city, $object->category, "city", $type);
+                    $result_ = $this->aobj_rep->addObj($object);
+                    if ($result_) {
+                        $result["success"]++;
+                        $result["object_s"] .= "\\r\\nlink = ". $object->url. " id = ". $object->id;
+                    } elseif ($result_ == "one") {
+                        $result["have"]++;
+                        $result["object_h"] .= "\\r\\nlink = ". $object->url. " id = ". $object->id;
+                    } else {
+                        $result["error"]++;
+                        $result["object_e"] .= "\\r\\nlink = ". $object->url. " id = ". $object->id;
+                    }
                     break;
                 case '2':
-                    # code...
+                    $object->type = $this->findParamOnString($object->title_obj, $object->category, "type");
+                    $object->distance = $this->findParamOnString($object->title_obj, $object->category, "distance");
+                    $object->home_square = $this->findParamOnString($object->title_obj, $object->category, "home_square");
+                    $object->earth_square = $this->findParamOnString($object->title_obj, $object->category, "earth_square");
+                    $object->build_floors = $this->findParamOnString($object->title_obj, $object->category, "build_floors");
+                    $object->deal = $this->findParamOnString($object->title_obj, $object->category, "deal");
+                    $object->price = $this->findParamOnString($object->price, $object->category, "price");
+                    $object->build_type = $this->findParamOnString($object->title_obj, $object->category, "build_type");
+                    $object->id = $this->findParamOnString($object->id, $object->category, "id");
+                    $object->url = "http://avito.ru".$object->url;
+                    $object->area = $this->findParamOnString($object->city, $object->category, "area");
+                    $object->city = $this->findParamOnString($object->city, $object->category, "city");
+                    if ($this->aobj_rep->addObj($object)) {
+                        $result["success"]++;
+                    } else {
+                        $result["error"]++;
+                    }
                     break;
                 case '3':
-                    # code...
+                    $object->type = "";
+                    $object->rooms = $this->findParamOnString($object->title_obj, $object->category, "room");
+                    $object->square = $this->findParamOnString($object->title_obj, $object->category, "square");
+                    $object->floor = $this->findParamOnString($object->title_obj, $object->category, "floor");
+                    $object->build_floors = $this->findParamOnString($object->title_obj, $object->category, "build_floors");
+                    $object->deal = $this->findParamOnString($object->title_obj, $object->category, "deal");
+                    $object->price = $this->findParamOnString($object->price, $object->category, "price");
+                    $object->build_type = $this->findParamOnString($object->title_obj, $object->category, "build_type");
+                    $object->id = $this->findParamOnString($object->id, $object->category, "id");
+                    $object->url = "http://avito.ru".$object->url;
+                    $object->area = $this->findParamOnString($object->city, $object->category, "area");
+                    $object->city = $this->findParamOnString($object->city, $object->category, "city");
+                    if ($this->aobj_rep->addObj($object)) {
+                        $result["success"]++;
+                    } else {
+                        $result["error"]++;
+                    }
                     break;
                 default:
                     # code...
                     break;
             }
         }
+        $output .= implode(" , ", $result);
+        Storage::disk('phantom')->put('avito.txt', $output);
+        Session::flash('parse_success', $result["success"]);
+        Session::flash('parse_error', $result["error"]);
     }
 
-public function findParamOnString($string, $category, $param) {
-    switch ($category) {
-        case '1':
-            switch ($param) {
-                case 'room':
-                    for($i = 1; $i > 11; $i++) {
-                        if ($string[1] == "$i-к") {
-                            return $i;
-                        }
-                    }
-                    break;
-                case 'square':
-                    return (int)$string[3];
-                    # code...
-                    break;
-                case 'floor':
-                    return (int)$string[5];
-                    # code...
-                    break;
-                case 'house_floor':
-                    for($i = 1; $i > 11; $i++) {
-                        if ($string[1] == "$i-этажного") {
-                            return $i;
-                        }
-                    }
-                    # code...
-                    break;
-                case 'build_type':
-                    switch ($string[6]) {
-                        case 'кирпичного':
-                            return "кирпич";
-                            break;
-                        case 'блочного':
-                            return "блок";
-                            break;
-                        default:
-                            # code...
-                            break;
-                    }
-                    # code...
-                    break;
-                default:
-                    # code...
-                    break;
-            }
-            break;
-        case '2':
-        case 'room':
-            for($i = 1; $i > 11; $i++) {
-                if ($string[1] == "$i-к") {
-                    return $i;
-                }
-            }
-            break;
-        case 'square':
-            return (int)$string[3];
-            # code...
-            break;
-        case 'floor':
-            return (int)$string[5];
-            # code...
-            break;
-        case 'price':
-            return $this->getAllInt($string[2]);
-            # code...
-            break;
-        case 'house_floor':
-            for($i = 1; $i > 11; $i++) {
-                if ($string[1] == "$i-этажный") {
-                    return $i;
-                }
-            }
-            # code...
-            break;
-        case 'build_type':
-            switch ($string[6]) {
-                case 'кирпичного':
-                    return "кирпич";
-                    break;
-                case 'блочного':
-                    return "блок";
-                    break;
-                default:
-                    # code...
-                    break;
-            }
-            # code...
-            break;
-        case '3':
-            # code...
-            break;
-        default:
-            # code...
-            break;
+    public function checkArray($array, $type) {
+        if (!preg_match("/\\d\\-к/", $array[1 + $type])) {
+            array_splice($array, 1 + $type, 1);
+            return $this->checkArray($array, $type);
+        }
+        return $array;
     }
-}
 
-public function getAllInt($string) {
-    $result = "";
-    preg_match_all("/\d/", $string, $result);
-    return $result;
-}
+    public function findParamOnString($string, $category, $param, $type = 0) {
+        $search_build_types = ["кирпичного", "панельного", "блочного", "монолитного", "деревяного"];
+        $build_types = ["Кирпичный", "Панельный", "Блочный", "Монолитный", "Деревяный"];
+        $search_types = ["дом", "дачу", "коттедж", "таунхаус"];
+        $types = ["Дом", "Дача", "Коттедж", "Таунхаус"];
+        $search_build_types_2 = ["кирпич", "брус", "бревно", "газоблоки", "металл", "пеноблоки", "сендвич-панели", "ж/б панели", "экспериментальные материалы"];
+        $build_types_2 = ["Кирпич", "Брус", "Бревно", "Металл", "Газоблоки", "Пеноблоки", "Сендвич-панели", "Ж/б панели", "Экспериментальные материалы"];
+        switch ($category) {
+            case '1':
+                switch ($param) {
+                    case 'id':
+                        return $this->getAllInt($string);
+                        break;
+                    case 'room':
+                        $room = explode(" ", $string[1 + $type]);
+                        for($i = 1; $i < 11; $i++) {
+                            if ($room[0] == "$i-к") {
+                                return $i;
+                            }
+                        }
+                        break;
+                    case 'square':
+                        $square = explode(" ", $string[2 + $type]);
+                        return (int)$square[0];
+                        # code...
+                        break;
+                    case 'floor':
+                        $floor = explode(" ", $string[3 + $type]);
+                        return (int)$floor[1];
+                        # code...
+                        break;
+                    case 'build_floors':
+                        for($i = 1; $i < 22; $i++) {
+                            if (preg_match("~".$i."\\-этажного~", $string[3 + $type])) {
+                                return $i;
+                            }
+                        }
+                        # code...
+                        break;
+                    case 'build_type':
+                        for ($i = 0; $i < count($search_build_types); $i++) {
+                            if (preg_match("~".$search_build_types[$i]."~", $string[3 + $type])) {
+                                return $build_types[$i];
+                            }
+                        }
+                        # code...
+                        break;
+                    case "deal":
+                        $deal = explode(" ", $string[0]);
+                        return $deal[0];
+                        break;
+                    case "city":
+                        $city = explode(",", $string);
+                        return trim($city[1]);
+                        break;
+                    case "area":
+                        $area = explode(",", $string);
+                        return isset($area[2]) ? trim($area[2]) : "";
+                        break;
+                    case 'price':
+                        return $this->getAllInt($string);
+                        # code...
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+                break;
+            case '2':
+                switch ($param) {
+                    case 'id':
+                        return $this->getAllInt($string);
+                        break;
+                    case 'type':
+                       for ($i = 0; $i < count($search_types); $i++) {
+                            if (preg_match("~".$search_types[$i]."~", $string[1])) {
+                                return $types[$i];
+                            }
+                        }
+                        break;
+                    case 'home_square':
+                            if (preg_match("~\\d* м²~", $string[2], $matches)) {
+                                return $this->getAllInt($matches[0]);
+                            }
+                        break;
+                    case 'earth_square':
+                        return $this->getAllInt($string[4]);
+                        break;
+                    case 'build_floors':
+                        for ($i = 1; $i < 11; $i++) {
+                            if (preg_match("~".$i."\\-этажный~", $string[2])) {
+                                return $i;
+                            }
+                        }
+                        break;
+                    case 'distance':
+                        if($string[5] == ",в черте города") {
+                            return 0;
+                        } else {
+                            return $this->getAllInt($string[5]);
+                        }
+                        break;    
+                    case 'build_type':
+                        for ($i = 0; $i < count($search_build_types_2); $i++) {
+                            if (preg_match("~".$search_build_types_2[$i]."~", $string[3])) {
+                                return $build_types_2[$i];
+                            }
+                        }
+                        break;
+                    case "deal":
+                        return $string[0];
+                        break;
+                    case "city":
+                        $city = explode(",", $string);
+                        return trim($city[1]);
+                        break;
+                    case "area":
+                        $area = explode(",", $string);
+                        return isset($area[2]) ? trim($area[2]) : "";
+                        break;
+                    case 'price':
+                        return $this->getAllInt($string);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case '3':
+                switch ($param) {
+                     case 'id':
+                        return $this->getAllInt($string);
+                        break;
+                    case 'room':
+                        $room = explode(" ", $string[2]);
+                        for($i = 1; $i < 11; $i++) {
+                            if ($room[0] == "в$i-к") {
+                                return $i;
+                            }
+                        }
+                        break;
+                    case 'square':
+                        $square = explode(" ", $string[1]);
+                        return (int)$square[1];
+                        # code...
+                        break;
+                    case 'floor':
+                        $floor = explode(" ", $string[3]);
+                        return (int)$floor[1];
+                        # code...
+                        break;
+                    case 'build_floors':
+                        for($i = 1; $i < 22; $i++) {
+                            if (preg_match("~".$i."\\-этажного~", $string[3])) {
+                                return $i;
+                            }
+                        }
+                        # code...
+                        break;
+                    case 'build_type':
+                        for ($i = 0; $i < count($search_build_types); $i++) {
+                            if (preg_match("~".$search_build_types[$i]."~", $string[3])) {
+                                return $build_types[$i];
+                            }
+                        }
+                        # code...
+                        break;
+                    case "deal":
+                        $deal = explode(" ", $string[0]);
+                        return $deal[0];
+                        break;
+                    case "city":
+                        $city = explode(",", $string);
+                        return trim($city[1]);
+                        break;
+                    case "area":
+                        $area = explode(",", $string);
+                        return isset($area[2]) ? trim($area[2]) : "";
+                        break;
+                    case 'price':
+                        return $this->getAllInt($string);
+                        # code...
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+                # code...
+                break;
+            default:
+                # code...
+                break;
+        }
+    }
+
+    public function parseDate($date){
+        $monthsList = array(
+        "1"=>"января","2"=>"февраля","3"=>"марта",
+        "4"=>"апреля","5"=>"мая", "6"=>"июня",
+        "7"=>"июля","8"=>"августа","9"=>"сентября",
+        "10"=>"октября","11"=>"ноября","12"=>"декабря");
+        preg_match("~\\d\\d\\:\\d\\d~", $date, $time);
+        $time = explode(":", $time[0]);
+        if(preg_match("~сегодня~", $date)) {
+            $obj_date = Carbon::today();
+            $obj_date->hour($time[0]);
+            $obj_date->minute($time[1]);
+        } elseif (preg_match("~вчера~", $date)) {
+            $obj_date = Carbon::yesterday();
+            $obj_date->hour($time[0]);
+            $obj_date->minute($time[1]);
+        } else {
+            foreach ($monthsList as $key => $value) {
+                if (preg_match("~".$value."~", $date)) {
+                    $mounth = $key;
+                }
+            }
+            preg_match("~ \\d* ~", $date, $day);
+            $day = (int)$day[0];
+            $now = Carbon::now();
+            $year = $now->year;
+            $obj_date = Carbon::createFromFormat('Y-m-d H:i', "$year-$mounth-$day ".$time[0].":".$time[1]);
+        }
+        return $obj_date;
+    }
+
+    public function getAllInt($string) {
+        $string = preg_replace("/[^0-9]/", '', $string);
+        if ($string == "") $string = 0;
+        return $string;
+    }
 }

@@ -15,11 +15,20 @@
             @endforeach
              </ul>
     @else
-        <li class="red">
-            <a href="{{ $item->url() }}">
-                <i class="{{ $item->icon }}"></i>
-                <span class="lbl">{{ $item->title }}</span>
-            </a>
-        </li>
+        @if($item->title == "Парсинг Авито")
+            <li class="red">
+                <a {{ $item->data_b }}>
+                    <i class="{{ $item->icon }}"></i>
+                    <span class="lbl">{{ $item->title }}</span>
+                </a>
+            </li>
+        @else
+            <li class="red">
+                <a href="{{ $item->url() }}">
+                    <i class="{{ $item->icon }}"></i>
+                    <span class="lbl">{{ $item->title }}</span>
+                </a>
+            </li>
+        @endif
     @endif
 @endforeach

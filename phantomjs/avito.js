@@ -1,5 +1,4 @@
-
-                    // Example using HTTP POST operation
+// Example using HTTP POST operation
 
 "use strict";
 
@@ -11,10 +10,9 @@ useragent.push('Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 
 useragent.push('Opera/12.02 (Android 4.1; Linux; Opera Mobi/ADR-1111101157; U; en-US) Presto/2.9.201 Version/12.02');
 
 //Здесь находится страничка, которую нужно спарсить
-var parseUrl = 'https://m.avito.ru/volgogradskaya_oblast_volzhskiy/kvartiry/prodam/1-komnatnye/novostroyka?user=1';
+var parseUrl = 'https://m.avito.ru/volgogradskaya_oblast_volzhskiy/kvartiry/prodam/novostroyka?user=1&f=496_5120b5124';
 var jobs_list = [];
 var page = require('webpage').create();
-page.settings.loadImages = false;
 
 // Это я передаю заголовки
 // Их можно посмотреть в браузере на закладке Network (тыкайте сами, ищите сами)
@@ -83,9 +81,6 @@ function after_clicked( page, job ) {
             job.id = page.evaluate(function() {
                 return document.querySelector('.item-id').innerText;
             });
-            job.date = page.evaluate(function() {
-                return document.querySelector('.item-add-date').innerText;
-            });
             job.contact_name = page.evaluate(function() {
                 var name = document.querySelector('.person-contact-name');
                 if (name !== null) {
@@ -118,8 +113,6 @@ function after_clicked( page, job ) {
                 return document.querySelector('.price-value').innerText;
             });
             console.log(JSON.stringify(job));
-
-            return true;
 }
 
 // middle function, click on desired tab
@@ -142,15 +135,14 @@ function click_div( page, job ) {
         console.log( job.url);
         console.log( "Failed to find desired element" );
         phantom.exit( 1 );
-        return false;
-    } else {
-        window.setTimeout(
-            function () {
-                return after_clicked( page, job );
-            },
-            1500
-        );
+        return;
     }
+    window.setTimeout(
+        function () {
+            after_clicked( page, job );
+        },
+        1500
+    );
 }
 
 function next_page(i, page, list) {
@@ -161,17 +153,18 @@ function next_page(i, page, list) {
             if (status !== 'success') {
                 console.log('Unable to access network');
             } else {
-            waitFor(
-                function () {
-                    return click_div( page, current_job );
-                },
-                function () {
+                window.setTimeout(function () {
+                        click_div( page, current_job );
+                    },
+                    500
+                );
+                window.setTimeout(function () {
                     next_page(++i, page, list);
-                }, 0);
+                }, 3000);
             }
         });
     } else {
-        phantom.exit(0);
+        phantom.exit();
     }
 }
 
@@ -189,7 +182,7 @@ function doit(page, link, list_jobs) {
                     for (var i = 0; i < objs.length; i++) {
                         var title = objs[i].querySelector('h3');
                         var url = objs[i].querySelector('a');
-                        job = {title: title.innerText, url: url.getAttribute('href'), phone: "", address: "", city: "", price: "", category: "", title_obj: "", contact_name: "", desc : "", person_name : "", id : "", date: ""};
+                        job = {title: title.innerText, url: url.getAttribute('href'), phone: "", address: "", city: "", price: "", category: "", title_obj: "", contact_name: "", desc : "", person_name : "", id : ""};
                         jobs.push(job);
                     }
                 return jobs;
@@ -208,39 +201,23 @@ function doit(page, link, list_jobs) {
                     return next.getAttribute('href');
                 });
                 href = "https://m.avito.ru" + href;
-                doit(page, href, arre);
+                window.setTimeout(
+                    function () {
+                        doit(page, href, arre);
+                    },
+                    1000
+                );
             } else {
                 var i = 0;
-                next_page(i, page, arre);
+                window.setTimeout(function () {
+                    next_page(i, page, arre);
+                }, 2000);
             }
         }
     });
 }
 
-function waitFor(testFx, onReady, timeOutMillis) {
-    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 5000, //< Default Max Timout is 5s
-        start = new Date().getTime(),
-        condition = false,
-        interval = setInterval(function () {
-            if ((new Date().getTime() - start < maxtimeOutMillis) && !condition) {
-                // If not time-out yet and condition not yet fulfilled
-                condition = (typeof (testFx) === "string" ? eval(testFx) : testFx()); //< defensive code
-            } else {
-                if (!condition) {
-                    // If condition still not fulfilled (timeout but condition is 'false')
-                    //console.log("'waitFor()' timeout");
-                    typeof (onReady) === "string" ? eval(onReady) : onReady();
-                    clearInterval(interval);
-                    //phantom.exit(1);
-                } else {
-                    // Condition fulfilled (timeout and/or condition is 'true')
-                    console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
-                    typeof (onReady) === "string" ? eval(onReady) : onReady(); //< Do what it's supposed to do once the condition is fulfilled
-                    clearInterval(interval); //< Stop this interval
-                }
-            }
-        }, 3000); //< repeat check every 500ms
-}
-
 doit(page, parseUrl, jobs_list);
-                
+
+
+

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Repositories\ObjectsRepository;
 use App\Repositories\CitiesRepository;
 use App\Repositories\AreasRepository;
+use App\Repositories\AobjectsRepository;
 use Illuminate\Support\Facades\Session;
 use App\Components\JavaScriptMaker;
 use Excel;
@@ -21,7 +22,7 @@ class IndexController extends AdminController {
     protected $city_rep;
     protected $area_rep;
 
-    public function __construct(ObjectsRepository $o_rep, CitiesRepository $city_rep, AreasRepository $area_rep) {
+    public function __construct(ObjectsRepository $o_rep, CitiesRepository $city_rep, AreasRepository $area_rep, AobjectsRepository $aobj_rep) {
         parent::__construct(new \App\Repositories\AdmMenusRepository(new \App\AdmMenu), new \App\Repositories\SettingsRepository(new \App\Setting()), new \App\User);
 
 //        if(Gate::denies('VIEW_ADMIN')) {
@@ -33,6 +34,7 @@ class IndexController extends AdminController {
         $this->inc_js_lib = array_add($this->inc_js_lib,'jq-ui',array('url' => '<script src="'.$this->pub_path.'/js/lib/jqueryui/jquery-ui.min.js"></script>'));
         $this->template = config('settings.theme').'.admin.index';
         $this->o_rep = $o_rep;
+        $this->aobj_rep = $aobj_rep;
         $this->city_rep = $city_rep;
         $this->area_rep = $area_rep;
         // INIT INPUTS
@@ -84,6 +86,14 @@ class IndexController extends AdminController {
         $filter = view(config('settings.theme').'.admin.filter')->with(array("inputs" => $this->inputs, "cities" => $cities, "data" => $filter_data));
         $this->content = view(config('settings.theme').'.admin.objects')->with(array("objects" => $objects, "menus" => $menus, "actions" => $actions, "order_select" => $order_select, "type" => $type, "filter" => $filter))->render();
         $this->title = 'Личный кабинет';
+        return $this->renderOutput();
+    }
+
+    public function avito(JavaScriptMaker $jsmaker, Request $request, $type = 'default', $order = ["created_at", "desc"]) {
+        $this->checkUser();
+        $objects = $this->aobj_rep->get("*", false, 40);
+        $this->content = view(config('settings.theme').'.admin.aobjects')->with(array("objects" => $objects, "type" => "default"))->render();
+        $this->title = 'Обьекты Авито';
         return $this->renderOutput();
     }
     

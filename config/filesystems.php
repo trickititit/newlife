@@ -62,6 +62,12 @@ return [
             'visibility' => 'public',
         ],
 
+        'phantom' => [
+            'driver' => 'local',
+            'root' => base_path("phantomjs/bin"),
+            'url' => env('APP_URL').'phantomjs/bin',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_KEY'),

@@ -18,6 +18,8 @@ class AdminController extends Controller
 
     protected $o_rep;
 
+    protected $aobj_rep;
+
     protected $a_rep;
 
     protected $p_rep;
@@ -57,7 +59,8 @@ class AdminController extends Controller
             'animate' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/animate.css">'),
             'bootstrap' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/lib/bootstrap/bootstrap.min.css">'),
             'main' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/main.css">'),
-            'style' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/style.css">'),
+            'loader' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/loaders.css">'),
+            'style' => array('url' => '<link rel="stylesheet" href="'.$this->pub_path.'/css/style.css">')
             );
         $this->inc_js_lib = array(
             'jq' => array('url' => '<script src="'.$this->pub_path.'/js/lib/jquery/jquery.min.js"></script>'),
@@ -137,7 +140,11 @@ class AdminController extends Controller
             foreach($menu as $item) {
 
                 if($item->parent == 0) {
-                    $m->add($item->title,array('url' => route($item->path), 'id' => $item->id))->data('icon', $item->icon);
+                    if($item->alias == "parse") {
+                        $m->add($item->title,array('url' => route($item->path), 'id' => $item->id))->data(['data_b' =>  'data-toggle=modal data-target=.modal-parse', 'icon' => $item->icon]);
+                    } else {
+                        $m->add($item->title,array('url' => route($item->path), 'id' => $item->id))->data('icon', $item->icon);
+                    }
                 }
                 else {
                     if($m->find($item->parent)) {

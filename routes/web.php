@@ -7,7 +7,7 @@ Route::get('/catalog/{order?}', ['uses' => 'CatalogController@index', 'as' => 's
 Route::get('/post/{post}', ['uses' => 'PostController@show', 'as' => 'site.post']);
 Route::post('/sendmail/', ['uses' => 'MailController@sendRequest', 'as' => 'site.send']);
 Route::post('/sendmailcall/', ['uses' => 'MailController@sendCall', 'as' => 'site.sendCall']);
-Route::get('/avito/', ['uses' => 'IndexController@avito', 'as' => 'site.avito']);
+Route::post('/parseAvito/', ['uses' => 'IndexController@parseAvito', 'as' => 'object.parse']);
 Route::get('/js/{file}', function($file = null)
 {
     $path = storage_path().'/app/public/new_life/js/'.$file.".js";
@@ -21,6 +21,7 @@ Auth::routes();
 Route::group(['prefix' => 'admin','middleware' => ['auth']],function() {
 //
     Route::get('/object/create/{category}/{deal}/{type}', ['uses' => 'Admin\ObjectController@create', 'as' => 'object.create']);
+    Route::get('/avito', ['uses' => 'Admin\IndexController@avito', 'as' => 'object.avito']);
     Route::resource('/object', 'Admin\ObjectController',['except' => ['index', 'create']]);
     Route::resource('/user', 'Admin\UserController');
     Route::resource('/post', 'Admin\PostController');
