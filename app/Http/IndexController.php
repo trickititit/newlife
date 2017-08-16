@@ -52,16 +52,16 @@ class IndexController extends SiteController
 
     public function parseAvito(Request $request, JavaScriptMaker $jsmaker) {
         $jsmaker->setJs("parse-avito", $request->parse_url, true, "", $this->randStr);
-        $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
+        $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
         exec($cmd, $output);
-        dump($output);
+        dump($output);        
         $this->objectAvitoToBase($output, $jsmaker);
     }
 
     public function curlAvito(JavaScriptMaker $jsmaker) {
         $url = "https://m.avito.ru/volgogradskaya_oblast_volzhskiy/kvartiry/prodam?user=1";
         $jsmaker->setJs("parse-avito", $url, true, "", $this->randStr);
-        $cmd = 'phantomjs/bin/phantomjs '.base_path("phantomjs/bin/avito.js");
+        $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
         exec($cmd, $output);
         dump($output);
         $this->objectAvitoToBase($output);
@@ -76,16 +76,16 @@ class IndexController extends SiteController
     }
 
     public function objectAvitoToBase($objects, $jsmaker){
-        $result = ["success" => 0, "error" => 0,"have" => 0, "object_s" => "", "object_e" => "", "object_h" => ""];
+        $result = ["success" => 0, "error" => 0];
         $text = "";
-        $i = 0;
         foreach ($objects as $object_) {
             $parseobject = json_decode($object_);
             $req = [$parseobject->title, $parseobject->url];
             $jsmaker->setJs("parse-avito-page", $req, true, "", $this->randStr);
-            $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
+            $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
             exec($cmd, $output);
-            $object = json_decode($output[$i]);
+            dump($output);
+            $object = json_decode($output);
             $object->category = mb_strtolower($object->category);
             if ($object->category == "квартиры") {
                 $object->category = 1;
@@ -117,16 +117,10 @@ class IndexController extends SiteController
                     $object->url = "http://avito.ru".$object->url;
                     $object->area = $this->findParamOnString($object->city, $object->category, "area", $type);
                     $object->city = $this->findParamOnString($object->city, $object->category, "city", $type);
-                    $result_ = $this->aobj_rep->addObj($object);
-                    if ($result_ == "one") {
-                        $result["have"]++;
-                        $result["object_h"] .= "\\nlink = ". $object->url. " id = ". $object->id;
-                    } elseif ($result_) {
+                    if ($this->aobj_rep->addObj($object)) {
                         $result["success"]++;
-                        $result["object_s"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     } else {
                         $result["error"]++;
-                        $result["object_e"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     }
                     break;
                 case '2':
@@ -142,16 +136,10 @@ class IndexController extends SiteController
                     $object->url = "http://avito.ru".$object->url;
                     $object->area = $this->findParamOnString($object->city, $object->category, "area");
                     $object->city = $this->findParamOnString($object->city, $object->category, "city");
-                    $result_ = $this->aobj_rep->addObj($object);
-                    if ($result_ == "one") {
-                        $result["have"]++;
-                        $result["object_h"] .= "\\nlink = ". $object->url. " id = ". $object->id;
-                    } elseif ($result_) {
+                    if ($this->aobj_rep->addObj($object)) {
                         $result["success"]++;
-                        $result["object_s"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     } else {
                         $result["error"]++;
-                        $result["object_e"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     }
                     break;
                 case '3':
@@ -167,27 +155,21 @@ class IndexController extends SiteController
                     $object->url = "http://avito.ru".$object->url;
                     $object->area = $this->findParamOnString($object->city, $object->category, "area");
                     $object->city = $this->findParamOnString($object->city, $object->category, "city");
-                    $result_ = $this->aobj_rep->addObj($object);
-                    if ($result_ == "one") {
-                        $result["have"]++;
-                        $result["object_h"] .= "\\nlink = ". $object->url. " id = ". $object->id;
-                    } elseif ($result_) {
+                    if ($this->aobj_rep->addObj($object)) {
                         $result["success"]++;
-                        $result["object_s"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     } else {
                         $result["error"]++;
-                        $result["object_e"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     }
                     break;
                 default:
                     # code...
                     break;
             }
-            $text .= json_encode($object, JSON_UNESCAPED_UNICODE);
-            $i++;
+            $text .= $object;
         }
-        $text .= "\\n";
-        $text .= implode(",", $result);
+        $text .= "\\r\\n";
+        $text .= implode(",", $objects);
+        dump($text);
         Storage::disk('phantom')->put('avito.txt', $text);
         Session::flash('parse_success', $result["success"]);
         Session::flash('parse_error', $result["error"]);
@@ -267,16 +249,16 @@ class IndexController extends SiteController
                         return $this->getAllInt($string);
                         break;
                     case 'type':
-                        for ($i = 0; $i < count($search_types); $i++) {
+                       for ($i = 0; $i < count($search_types); $i++) {
                             if (preg_match("~".$search_types[$i]."~", $string[1])) {
                                 return $types[$i];
                             }
                         }
                         break;
                     case 'home_square':
-                        if (preg_match("~\\d* м²~", $string[2], $matches)) {
-                            return $this->getAllInt($matches[0]);
-                        }
+                            if (preg_match("~\\d* м²~", $string[2], $matches)) {
+                                return $this->getAllInt($matches[0]);
+                            }
                         break;
                     case 'earth_square':
                         return $this->getAllInt($string[4]);
@@ -294,7 +276,7 @@ class IndexController extends SiteController
                         } else {
                             return $this->getAllInt($string[5]);
                         }
-                        break;
+                        break;    
                     case 'build_type':
                         for ($i = 0; $i < count($search_build_types_2); $i++) {
                             if (preg_match("~".$search_build_types_2[$i]."~", $string[3])) {
@@ -322,7 +304,7 @@ class IndexController extends SiteController
                 break;
             case '3':
                 switch ($param) {
-                    case 'id':
+                     case 'id':
                         return $this->getAllInt($string);
                         break;
                     case 'room':
@@ -389,10 +371,10 @@ class IndexController extends SiteController
 
     public function parseDate($date){
         $monthsList = array(
-            "1"=>"января","2"=>"февраля","3"=>"марта",
-            "4"=>"апреля","5"=>"мая", "6"=>"июня",
-            "7"=>"июля","8"=>"августа","9"=>"сентября",
-            "10"=>"октября","11"=>"ноября","12"=>"декабря");
+        "1"=>"января","2"=>"февраля","3"=>"марта",
+        "4"=>"апреля","5"=>"мая", "6"=>"июня",
+        "7"=>"июля","8"=>"августа","9"=>"сентября",
+        "10"=>"октября","11"=>"ноября","12"=>"декабря");
         preg_match("~\\d\\d\\:\\d\\d~", $date, $time);
         $time = explode(":", $time[0]);
         if(preg_match("~сегодня~", $date)) {

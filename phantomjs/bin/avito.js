@@ -1,5 +1,5 @@
 
-                    // Example using HTTP POST operation
+                // Example using HTTP POST operation
 
 "use strict";
 
@@ -11,10 +11,11 @@ useragent.push('Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 
 useragent.push('Opera/12.02 (Android 4.1; Linux; Opera Mobi/ADR-1111101157; U; en-US) Presto/2.9.201 Version/12.02');
 
 //Здесь находится страничка, которую нужно спарсить
-var parseUrl = 'https://m.avito.ru/volgogradskaya_oblast_volzhskiy/kvartiry/prodam/1-komnatnye/novostroyka?user=1';
+var parseUrl = '/volgogradskaya_oblast_volzhskiy/komnaty/komnata_16_m_v_3-k_12_et._1168613499';
+var title = 'Комната 16 м² в 3-к, 1/2 эт.';
+var job = {title: title, url: parseUrl, phone: "", address: "", city: "", price: "", category: "", title_obj: "", contact_name: "", desc : "", person_name : "", id : "", date: ""};                               
 var jobs_list = [];
 var page = require('webpage').create();
-page.settings.loadImages = false;
 
 // Это я передаю заголовки
 // Их можно посмотреть в браузере на закладке Network (тыкайте сами, ищите сами)
@@ -83,9 +84,6 @@ function after_clicked( page, job ) {
             job.id = page.evaluate(function() {
                 return document.querySelector('.item-id').innerText;
             });
-            job.date = page.evaluate(function() {
-                return document.querySelector('.item-add-date').innerText;
-            });
             job.contact_name = page.evaluate(function() {
                 var name = document.querySelector('.person-contact-name');
                 if (name !== null) {
@@ -101,6 +99,9 @@ function after_clicked( page, job ) {
                 } else {
                     return "none";
                 }
+            });
+            job.date = page.evaluate(function() {
+                return document.querySelector('.item-add-date').innerText;
             });
             job.city = page.evaluate(function() {
                 return document.querySelector('.avito-address-text').innerText;
@@ -142,37 +143,29 @@ function click_div( page, job ) {
         console.log( job.url);
         console.log( "Failed to find desired element" );
         phantom.exit( 1 );
-        return false;
+        return;
     } else {
         window.setTimeout(
             function () {
                 return after_clicked( page, job );
-            },
-            1500
-        );
+            }, 1500);
     }
 }
 
-function next_page(i, page, list) {
-    if (i <= (list.length - 1)) {
-        var current_job = list[i];
-        var url = current_job.url;
-        page.open("https://m.avito.ru" + url, function (status) {
+function next_page(page, job) {
+       page.open("https://m.avito.ru" + job.url, function (status) {
             if (status !== 'success') {
                 console.log('Unable to access network');
             } else {
             waitFor(
                 function () {
-                    return click_div( page, current_job );
+                    return click_div( page, job );
                 },
                 function () {
-                    next_page(++i, page, list);
-                }, 0);
+                    phantom.exit();
+                }, 3000);
             }
         });
-    } else {
-        phantom.exit(0);
-    }
 }
 
 
@@ -189,7 +182,7 @@ function doit(page, link, list_jobs) {
                     for (var i = 0; i < objs.length; i++) {
                         var title = objs[i].querySelector('h3');
                         var url = objs[i].querySelector('a');
-                        job = {title: title.innerText, url: url.getAttribute('href'), phone: "", address: "", city: "", price: "", category: "", title_obj: "", contact_name: "", desc : "", person_name : "", id : "", date: ""};
+                        job = {title: title.innerText, url: url.getAttribute('href'), phone: "", address: "", city: "", price: "", category: "", title_obj: "", contact_name: "", desc : "", person_name : "", id : "", date : ""};
                         jobs.push(job);
                     }
                 return jobs;
@@ -208,10 +201,17 @@ function doit(page, link, list_jobs) {
                     return next.getAttribute('href');
                 });
                 href = "https://m.avito.ru" + href;
-                doit(page, href, arre);
+                window.setTimeout(
+                    function () {
+                        doit(page, href, arre);
+                    },
+                    1000
+                );
             } else {
                 var i = 0;
-                next_page(i, page, arre);
+                window.setTimeout(function () {
+                    next_page(i, page, arre);
+                }, 3000);
             }
         }
     });
@@ -239,8 +239,8 @@ function waitFor(testFx, onReady, timeOutMillis) {
                     clearInterval(interval); //< Stop this interval
                 }
             }
-        }, 3000); //< repeat check every 500ms
+        }, 2000); //< repeat check every 500ms
 }
 
-doit(page, parseUrl, jobs_list);
+next_page(page, job);
                 
