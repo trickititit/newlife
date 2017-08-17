@@ -68,7 +68,7 @@ class IndexController extends SiteController
     }
 
     public function checkArray($array, $type) {
-        if (!preg_match("/\\d\\-к/", $array[1 + $type])) {
+        if (!preg_match("/\\d\\-к/", $array[1 + $type]) && $array[1 + $type] != "Студия") {
             array_splice($array, 1 + $type, 1);
             return $this->checkArray($array, $type);
         }
@@ -81,10 +81,14 @@ class IndexController extends SiteController
         $i = 0;
         foreach ($objects as $object_) {
             $parseobject = json_decode($object_);
+            if ($this->aobj_rep->getOne($parseobject->id)) {
+                continue;
+            }
             $req = [$parseobject->title, $parseobject->url];
             $jsmaker->setJs("parse-avito-page", $req, true, "", $this->randStr);
             $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
             exec($cmd, $output);
+            dump($output);
             $object = json_decode($output[$i]);
             $object->category = mb_strtolower($object->category);
             if ($object->category == "квартиры") {
@@ -194,8 +198,8 @@ class IndexController extends SiteController
     }
 
     public function findParamOnString($string, $category, $param, $type = 0) {
-        $search_build_types = ["кирпичного", "панельного", "блочного", "монолитного", "деревяного"];
-        $build_types = ["Кирпичный", "Панельный", "Блочный", "Монолитный", "Деревяный"];
+        $search_build_types = ["кирпичного", "панельного", "блочного", "монолитного", "деревянного"];
+        $build_types = ["Кирпичный", "Панельный", "Блочный", "Монолитный", "Деревянный"];
         $search_types = ["дом", "дачу", "коттедж", "таунхаус"];
         $types = ["Дом", "Дача", "Коттедж", "Таунхаус"];
         $search_build_types_2 = ["кирпич", "брус", "бревно", "газоблоки", "металл", "пеноблоки", "сендвич-панели", "ж/б панели", "экспериментальные материалы"];
@@ -207,6 +211,9 @@ class IndexController extends SiteController
                         return $this->getAllInt($string);
                         break;
                     case 'room':
+                        if ($string[1 + $type] == "Студия") {
+                            return 1;
+                        }
                         $room = explode(" ", $string[1 + $type]);
                         for($i = 1; $i < 11; $i++) {
                             if ($room[0] == "$i-к") {

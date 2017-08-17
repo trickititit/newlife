@@ -52,23 +52,23 @@ class IndexController extends SiteController
 
     public function parseAvito(Request $request, JavaScriptMaker $jsmaker) {
         $jsmaker->setJs("parse-avito", $request->parse_url, true, "", $this->randStr);
-        $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
+        $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
         exec($cmd, $output);
-        dump($output);        
+        dump($output);
         $this->objectAvitoToBase($output, $jsmaker);
     }
 
     public function curlAvito(JavaScriptMaker $jsmaker) {
         $url = "https://m.avito.ru/volgogradskaya_oblast_volzhskiy/kvartiry/prodam?user=1";
         $jsmaker->setJs("parse-avito", $url, true, "", $this->randStr);
-        $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
+        $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
         exec($cmd, $output);
         dump($output);
         $this->objectAvitoToBase($output);
     }
 
     public function checkArray($array, $type) {
-        if (!preg_match("/\\d\\-к/", $array[1 + $type])) {
+        if (!preg_match("/\\d\\-к/", $array[1 + $type]) && $array[1 + $type] != "Студия") {
             array_splice($array, 1 + $type, 1);
             return $this->checkArray($array, $type);
         }
@@ -76,16 +76,20 @@ class IndexController extends SiteController
     }
 
     public function objectAvitoToBase($objects, $jsmaker){
-        $result = ["success" => 0, "error" => 0];
+        $result = ["success" => 0, "error" => 0,"have" => 0, "object_s" => "", "object_e" => "", "object_h" => ""];
         $text = "";
+        $i = 0;
         foreach ($objects as $object_) {
             $parseobject = json_decode($object_);
+            if ($this->aobj_rep->getOne($parseobject->id)) {
+                continue;
+            }
             $req = [$parseobject->title, $parseobject->url];
             $jsmaker->setJs("parse-avito-page", $req, true, "", $this->randStr);
-            $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
+            $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
             exec($cmd, $output);
             dump($output);
-            $object = json_decode($output);
+            $object = json_decode($output[$i]);
             $object->category = mb_strtolower($object->category);
             if ($object->category == "квартиры") {
                 $object->category = 1;
@@ -117,10 +121,16 @@ class IndexController extends SiteController
                     $object->url = "http://avito.ru".$object->url;
                     $object->area = $this->findParamOnString($object->city, $object->category, "area", $type);
                     $object->city = $this->findParamOnString($object->city, $object->category, "city", $type);
-                    if ($this->aobj_rep->addObj($object)) {
+                    $result_ = $this->aobj_rep->addObj($object);
+                    if ($result_ == "one") {
+                        $result["have"]++;
+                        $result["object_h"] .= "\\nlink = ". $object->url. " id = ". $object->id;
+                    } elseif ($result_) {
                         $result["success"]++;
+                        $result["object_s"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     } else {
                         $result["error"]++;
+                        $result["object_e"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     }
                     break;
                 case '2':
@@ -136,10 +146,16 @@ class IndexController extends SiteController
                     $object->url = "http://avito.ru".$object->url;
                     $object->area = $this->findParamOnString($object->city, $object->category, "area");
                     $object->city = $this->findParamOnString($object->city, $object->category, "city");
-                    if ($this->aobj_rep->addObj($object)) {
+                    $result_ = $this->aobj_rep->addObj($object);
+                    if ($result_ == "one") {
+                        $result["have"]++;
+                        $result["object_h"] .= "\\nlink = ". $object->url. " id = ". $object->id;
+                    } elseif ($result_) {
                         $result["success"]++;
+                        $result["object_s"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     } else {
                         $result["error"]++;
+                        $result["object_e"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     }
                     break;
                 case '3':
@@ -155,29 +171,35 @@ class IndexController extends SiteController
                     $object->url = "http://avito.ru".$object->url;
                     $object->area = $this->findParamOnString($object->city, $object->category, "area");
                     $object->city = $this->findParamOnString($object->city, $object->category, "city");
-                    if ($this->aobj_rep->addObj($object)) {
+                    $result_ = $this->aobj_rep->addObj($object);
+                    if ($result_ == "one") {
+                        $result["have"]++;
+                        $result["object_h"] .= "\\nlink = ". $object->url. " id = ". $object->id;
+                    } elseif ($result_) {
                         $result["success"]++;
+                        $result["object_s"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     } else {
                         $result["error"]++;
+                        $result["object_e"] .= "\\nlink = ". $object->url. " id = ". $object->id;
                     }
                     break;
                 default:
                     # code...
                     break;
             }
-            $text .= $object;
+            $text .= json_encode($object, JSON_UNESCAPED_UNICODE);
+            $i++;
         }
-        $text .= "\\r\\n";
-        $text .= implode(",", $objects);
-        dump($text);
+        $text .= "\\n";
+        $text .= implode(",", $result);
         Storage::disk('phantom')->put('avito.txt', $text);
         Session::flash('parse_success', $result["success"]);
         Session::flash('parse_error', $result["error"]);
     }
 
     public function findParamOnString($string, $category, $param, $type = 0) {
-        $search_build_types = ["кирпичного", "панельного", "блочного", "монолитного", "деревяного"];
-        $build_types = ["Кирпичный", "Панельный", "Блочный", "Монолитный", "Деревяный"];
+        $search_build_types = ["кирпичного", "панельного", "блочного", "монолитного", "деревянного"];
+        $build_types = ["Кирпичный", "Панельный", "Блочный", "Монолитный", "Деревянный"];
         $search_types = ["дом", "дачу", "коттедж", "таунхаус"];
         $types = ["Дом", "Дача", "Коттедж", "Таунхаус"];
         $search_build_types_2 = ["кирпич", "брус", "бревно", "газоблоки", "металл", "пеноблоки", "сендвич-панели", "ж/б панели", "экспериментальные материалы"];
@@ -189,6 +211,9 @@ class IndexController extends SiteController
                         return $this->getAllInt($string);
                         break;
                     case 'room':
+                        if ($string[1 + $type] == "Студия") {
+                            return 1;
+                        }
                         $room = explode(" ", $string[1 + $type]);
                         for($i = 1; $i < 11; $i++) {
                             if ($room[0] == "$i-к") {
@@ -249,16 +274,16 @@ class IndexController extends SiteController
                         return $this->getAllInt($string);
                         break;
                     case 'type':
-                       for ($i = 0; $i < count($search_types); $i++) {
+                        for ($i = 0; $i < count($search_types); $i++) {
                             if (preg_match("~".$search_types[$i]."~", $string[1])) {
                                 return $types[$i];
                             }
                         }
                         break;
                     case 'home_square':
-                            if (preg_match("~\\d* м²~", $string[2], $matches)) {
-                                return $this->getAllInt($matches[0]);
-                            }
+                        if (preg_match("~\\d* м²~", $string[2], $matches)) {
+                            return $this->getAllInt($matches[0]);
+                        }
                         break;
                     case 'earth_square':
                         return $this->getAllInt($string[4]);
@@ -276,7 +301,7 @@ class IndexController extends SiteController
                         } else {
                             return $this->getAllInt($string[5]);
                         }
-                        break;    
+                        break;
                     case 'build_type':
                         for ($i = 0; $i < count($search_build_types_2); $i++) {
                             if (preg_match("~".$search_build_types_2[$i]."~", $string[3])) {
@@ -304,7 +329,7 @@ class IndexController extends SiteController
                 break;
             case '3':
                 switch ($param) {
-                     case 'id':
+                    case 'id':
                         return $this->getAllInt($string);
                         break;
                     case 'room':
@@ -371,10 +396,10 @@ class IndexController extends SiteController
 
     public function parseDate($date){
         $monthsList = array(
-        "1"=>"января","2"=>"февраля","3"=>"марта",
-        "4"=>"апреля","5"=>"мая", "6"=>"июня",
-        "7"=>"июля","8"=>"августа","9"=>"сентября",
-        "10"=>"октября","11"=>"ноября","12"=>"декабря");
+            "1"=>"января","2"=>"февраля","3"=>"марта",
+            "4"=>"апреля","5"=>"мая", "6"=>"июня",
+            "7"=>"июля","8"=>"августа","9"=>"сентября",
+            "10"=>"октября","11"=>"ноября","12"=>"декабря");
         preg_match("~\\d\\d\\:\\d\\d~", $date, $time);
         $time = explode(":", $time[0]);
         if(preg_match("~сегодня~", $date)) {

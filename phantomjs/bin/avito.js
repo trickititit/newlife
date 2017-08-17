@@ -11,10 +11,13 @@ useragent.push('Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 
 useragent.push('Opera/12.02 (Android 4.1; Linux; Opera Mobi/ADR-1111101157; U; en-US) Presto/2.9.201 Version/12.02');
 
 //Здесь находится страничка, которую нужно спарсить
-var parseUrl = '/volgogradskaya_oblast_volzhskiy/komnaty/komnata_16_m_v_3-k_12_et._1168613499';
-var title = 'Комната 16 м² в 3-к, 1/2 эт.';
+var parseUrl = '/volgogradskaya_oblast_volzhskiy/kvartiry/4-k_kvartira_93_m_13_et._984839677';
+var title = '4-к квартира, 93 м², 1/3 эт.';
 var job = {title: title, url: parseUrl, phone: "", address: "", city: "", price: "", category: "", title_obj: "", contact_name: "", desc : "", person_name : "", id : "", date: ""};                               
 var jobs_list = [];
+var debug = false;
+var arr_debug = [];
+var click = false;
 var page = require('webpage').create();
 
 // Это я передаю заголовки
@@ -73,6 +76,9 @@ function mouseclick( element ) {
 // final function called, output screenshot, exit
 //noinspection JSAnnotator
 function after_clicked( page, job ) {
+        if (debug) {  
+           arr_debug.push((new Date().getTime() - arr_debug[0]) + " late ms. this after");  
+        }
             job.title_obj = page.evaluate(function() {
                 return [].map.call(document.querySelectorAll('.semantic-text'), function (span) {
                     return span.innerText;
@@ -119,14 +125,20 @@ function after_clicked( page, job ) {
                 return document.querySelector('.price-value').innerText;
             });
             console.log(JSON.stringify(job));
-
-            return true;
+            if (debug) {
+              for (var f = 0; f < arr_debug.length; f++) {
+                    console.log(JSON.stringify(arr_debug[f]));
+                }
+            }
+            phantom.exit( 1 );
 }
 
-// middle function, click on desired tab
-//noinspection JSAnnotator
-function click_div( page, job ) {
-    var clicked = page.evaluate(
+function checkClick (page) {
+    if(debug) {
+       arr_debug.push((new Date().getTime() - arr_debug[0]) + " late ms. this check click");
+    }
+     if (!click) {
+            var clicked = page.evaluate(
         function ( mouseclick_fn ) {
             // want the div with class "submenu"
             var element = document.querySelector( "a.action-show-number" );
@@ -138,32 +150,51 @@ function click_div( page, job ) {
             return true;
         }, mouseclick
     );
-
-    if ( ! clicked ) {
+    click = clicked;
+     }
+    if ( ! click ) {
         console.log( job.url);
         console.log( "Failed to find desired element" );
         phantom.exit( 1 );
         return;
-    } else {
-        window.setTimeout(
-            function () {
-                return after_clicked( page, job );
-            }, 1500);
+        } else {
+            var result =  page.evaluate(function() {
+                var txt = document.querySelector( "a.action-show-number span" ).innerText;
+                if (txt !== "Позвонить") {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            return result;
     }
 }
 
+// middle function, click on desired tab
+//noinspection JSAnnotator
+function click_div( page, job ) {
+        if (debug) {  
+           arr_debug.push((new Date().getTime() - arr_debug[0]) + " late ms. this div click");  
+        }
+        waitFor(  function () {
+                    return checkClick( page);
+                },
+                function () {
+                    after_clicked( page, job );
+                }, 5000);
+}
+
+
 function next_page(page, job) {
+        if (debug) {
+            arr_debug.push(new Date().getTime());  
+           arr_debug.push(new Date().getTime() + " start parse ms.");  
+        }
        page.open("https://m.avito.ru" + job.url, function (status) {
             if (status !== 'success') {
                 console.log('Unable to access network');
             } else {
-            waitFor(
-                function () {
-                    return click_div( page, job );
-                },
-                function () {
-                    phantom.exit();
-                }, 3000);
+               click_div( page, job );
             }
         });
 }
@@ -218,29 +249,28 @@ function doit(page, link, list_jobs) {
 }
 
 function waitFor(testFx, onReady, timeOutMillis) {
-    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 5000, //< Default Max Timout is 5s
+    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3000, //< Default Max Timout is 3s
         start = new Date().getTime(),
         condition = false,
-        interval = setInterval(function () {
-            if ((new Date().getTime() - start < maxtimeOutMillis) && !condition) {
+        interval = setInterval(function() {
+            if ( (new Date().getTime() - start < maxtimeOutMillis) && !condition ) {
                 // If not time-out yet and condition not yet fulfilled
-                condition = (typeof (testFx) === "string" ? eval(testFx) : testFx()); //< defensive code
+                condition = (typeof(testFx) === "string" ? eval(testFx) : testFx()); //< defensive code
             } else {
-                if (!condition) {
+                if(!condition) {
                     // If condition still not fulfilled (timeout but condition is 'false')
                     //console.log("'waitFor()' timeout");
-                    typeof (onReady) === "string" ? eval(onReady) : onReady();
-                    clearInterval(interval);
-                    //phantom.exit(1);
+                    phantom.exit(1);
                 } else {
                     // Condition fulfilled (timeout and/or condition is 'true')
-                    console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
-                    typeof (onReady) === "string" ? eval(onReady) : onReady(); //< Do what it's supposed to do once the condition is fulfilled
+                    //console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
+                    typeof(onReady) === "string" ? eval(onReady) : onReady(); //< Do what it's supposed to do once the condition is fulfilled
                     clearInterval(interval); //< Stop this interval
                 }
             }
-        }, 2000); //< repeat check every 500ms
-}
+        }, 1500); //< repeat check every 250ms
+};
+
 
 next_page(page, job);
                 
