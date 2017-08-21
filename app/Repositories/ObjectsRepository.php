@@ -25,7 +25,14 @@ class ObjectsRepository extends Repository {
     }
 
     public function addObject($request) {
+        $this->model = new Object();
         if (true) {
+            if($request->obj_rooms == "Студия") {
+                $request->obj_rooms = 1;
+            }
+            if($request->obj_city == "Волгоград") {
+                $request->obj_city = 1;
+            }
             $obj_type = $request->obj_category;
             $obj_area_input = "obj_area" . $request->obj_city;
             $user = Auth::user();
