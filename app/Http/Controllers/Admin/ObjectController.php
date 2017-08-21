@@ -12,6 +12,7 @@ use App\Repositories\ComfortsRepository;
 use App\Components\JavaScriptMaker;
 use App\Components\ExcelExport;
 use Gate;
+use File;
 use Carbon\Carbon;
 
 class ObjectController extends AdminController
@@ -63,7 +64,11 @@ class ObjectController extends AdminController
     }
 
     public function index() {
-        
+        $content = File::get(base_path("storage/objects.json"));
+        $json = json_decode($content);
+        foreach ($json as $obj) {
+            $this->o_rep->addObject($obj);
+        }
     }
 
     /**

@@ -52,19 +52,34 @@ class IndexController extends SiteController
 
     public function parseAvito(Request $request, JavaScriptMaker $jsmaker) {
         $jsmaker->setJs("parse-avito", $request->parse_url, true, "", $this->randStr);
-        $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
+        $cmd = "phantomjs ".base_path("phantomjs/bin/avito.js");
         exec($cmd, $output);
         dump($output);
         $this->objectAvitoToBase($output, $jsmaker);
     }
 
-    public function curlAvito(JavaScriptMaker $jsmaker) {
-        $url = "https://m.avito.ru/volgogradskaya_oblast_volzhskiy/kvartiry/prodam?user=1";
+    public function curlAvitoK(JavaScriptMaker $jsmaker) {
+        $url = "https://m.avito.ru/volgogradskaya_oblast_volzhskiy/kvartiry/prodam/vtorichka?user=1";
         $jsmaker->setJs("parse-avito", $url, true, "", $this->randStr);
-        $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
+        $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
         exec($cmd, $output);
-        dump($output);
-        $this->objectAvitoToBase($output);
+        $this->objectAvitoToBase($output, $jsmaker);
+    }
+
+    public function curlAvitoH(JavaScriptMaker $jsmaker) {
+        $url = "https://m.avito.ru/volgogradskaya_oblast_volzhskiy/doma_dachi_kottedzhi/prodam?user=1";
+        $jsmaker->setJs("parse-avito", $url, true, "", $this->randStr);
+        $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
+        exec($cmd, $output);
+        $this->objectAvitoToBase($output, $jsmaker);
+    }
+
+    public function curlAvitoC(JavaScriptMaker $jsmaker) {
+        $url = "https://m.avito.ru/volgogradskaya_oblast_volzhskiy/komnaty/prodam?user=1";
+        $jsmaker->setJs("parse-avito", $url, true, "", $this->randStr);
+        $cmd = 'phantomjs '.base_path("phantomjs/bin/avito.js");
+        exec($cmd, $output);
+        $this->objectAvitoToBase($output, $jsmaker);
     }
 
     public function checkArray($array, $type) {
@@ -86,9 +101,8 @@ class IndexController extends SiteController
             }
             $req = [$parseobject->title, $parseobject->url];
             $jsmaker->setJs("parse-avito-page", $req, true, "", $this->randStr);
-            $cmd = base_path("phantomjs/bin/phantomjs")." ".base_path("phantomjs/bin/avito.js");
+            $cmd = "phantomjs ".base_path("phantomjs/bin/avito.js");
             exec($cmd, $output);
-            dump($output);
             $object = json_decode($output[$i]);
             $object->category = mb_strtolower($object->category);
             if ($object->category == "квартиры") {

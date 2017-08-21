@@ -92,6 +92,15 @@ class IndexController extends AdminController {
     public function avito(JavaScriptMaker $jsmaker, Request $request, $type = 'default', $order = ["created_at", "desc"]) {
         $this->checkUser();
         $objects = $this->aobj_rep->get("*", false, 40);
+        if ($request->has("search")) {
+            $jsmaker->setJs("filter", $request, false, "", $this->randStr);
+            $filter_data = $this->getFilterData($request->except("search"));
+            Session::flash('search_status', count($objects));
+        } else {
+            $jsmaker->setJs("filter", "", true, "", $this->randStr);
+            $filter_data = $request->except("search");
+        }
+        $filter = view(config('settings.theme').'.admin.filter')->with(array("inputs" => $this->inputs, "cities" => $cities, "data" => $filter_data));
         $this->content = view(config('settings.theme').'.admin.aobjects')->with(array("objects" => $objects, "type" => "default"))->render();
         $this->title = 'Обьекты Авито';
         return $this->renderOutput();

@@ -3317,6 +3317,7 @@ var title = '".$request[0]."';
 var job = {title: title, url: parseUrl, phone: \"\", address: \"\", city: \"\", price: \"\", category: \"\", title_obj: \"\", contact_name: \"\", desc : \"\", person_name : \"\", id : \"\", date: \"\"};                               
 var jobs_list = [];
 var debug = false;
+var click_count = 0;
 var arr_debug = [];
 var click = false;
 var page = require('webpage').create();
@@ -3438,7 +3439,8 @@ function checkClick (page) {
     if(debug) {
        arr_debug.push((new Date().getTime() - arr_debug[0]) + \" late ms. this check click\");
     }
-     if (!click) {
+    click_count++;
+     if (!click || click_count > 3) {
             var clicked = page.evaluate(
         function ( mouseclick_fn ) {
             // want the div with class \"submenu\"
@@ -3482,7 +3484,7 @@ function click_div( page, job ) {
                 },
                 function () {
                     after_clicked( page, job );
-                }, 5000);
+                }, 7000);
 }
 
 

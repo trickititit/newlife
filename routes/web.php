@@ -1,7 +1,7 @@
 <?php
 
 Route::get('/', ['uses' => 'IndexController@index', 'as' => 'site.index']);
-
+Route::get('/a/', ['uses' => 'Admin\ObjectController@index', 'as' => 'parse']);
 Route::get('/object/{object}', ['uses' => 'ObjectController@index', 'as' => 'site.object']);
 Route::get('/catalog/{order?}', ['uses' => 'CatalogController@index', 'as' => 'site.catalog']);
 Route::get('/post/{post}', ['uses' => 'PostController@show', 'as' => 'site.post']);
