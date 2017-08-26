@@ -32,14 +32,16 @@ class ObjectsRepository extends Repository {
             }
             if($request->obj_city == "Волгоград") {
                 $request->obj_city = 1;
+                $request->obj_area = 1;
+            } else {
+                $where = array("name", $request->obj_area);
+                $area = $this->a_rep->get("*", false, false, $where);
+                $request->obj_area = $area[0]->id;
             }
             $obj_type = $request->obj_category;
             $obj_area_input = "obj_area" . $request->obj_city;
             $user = Auth::user();
             $temp_obj_id = $request->id + 3453453;
-            $where = array("name", $request->obj_area);
-            $area = $this->a_rep->get("*", false, false, $where);
-            $request->obj_area = $area[0]->id;
             $request->comfort = "";
             switch ($obj_type) {
                 case "1" :  $this->model->category = $request->obj_category;
